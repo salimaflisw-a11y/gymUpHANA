@@ -28,7 +28,8 @@ export const routes: Routes = [
       { path: 'hiring', loadComponent: () => import('./hiring/admin/posting-list/posting-list.component').then(m => m.PostingListComponent) },
       { path: 'applications', loadComponent: () => import('./hiring/admin/application-review/application-review.component').then(m => m.ApplicationReviewComponent) },
       { path: 'revenue', loadComponent: () => import('./payment/admin/revenue-report/revenue-report.component').then(m => m.RevenueReportComponent) },
-      { path: 'streaks', loadComponent: () => import('./attendance/admin/streak-overview/streak-overview.component').then(m => m.StreakOverviewComponent) }
+      { path: 'streaks', loadComponent: () => import('./attendance/admin/streak-overview/streak-overview.component').then(m => m.StreakOverviewComponent) },
+      { path: 'retention', loadComponent: () => import('./admin-dashboard/retention/retention.component').then(m => m.RetentionComponent) }
     ]
   },
   {
@@ -66,7 +67,9 @@ export const routes: Routes = [
       { path: 'checkout', loadComponent: () => import('./payment/member/checkout/checkout.component').then(m => m.CheckoutComponent) },
       { path: 'checkin', loadComponent: () => import('./attendance/member/qr-checkin/qr-checkin.component').then(m => m.QrCheckinComponent) },
       { path: 'schedule', loadComponent: () => import('./attendance/member/weekly-schedule/weekly-schedule.component').then(m => m.WeeklyScheduleComponent) },
-      { path: 'streak', loadComponent: () => import('./attendance/member/my-streak/my-streak.component').then(m => m.MyStreakComponent) }
+      { path: 'streak', loadComponent: () => import('./attendance/member/my-streak/my-streak.component').then(m => m.MyStreakComponent) },
+      { path: 'challenges', loadComponent: () => import('./gamification/member/challenges-trophies/challenges-trophies.component').then(m => m.ChallengesTrophiesComponent) },
+      { path: 'equipment', loadComponent: () => import('./equipment/member/pr-vault/pr-vault.component').then(m => m.PrVaultComponent) }
     ]
   },
   {

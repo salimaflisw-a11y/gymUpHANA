@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AttendanceApiService } from '../../attendance-api.service';
 import { MemberAttendanceHistory } from '../../shared/streak.model';
+import { AdvisorApiService } from '../../../core/services/advisor-api.service';
+import { RecoveryAssessment } from '../../../core/models/advisor.model';
 
 @Component({
   selector: 'app-my-streak',
@@ -13,6 +15,7 @@ import { MemberAttendanceHistory } from '../../shared/streak.model';
 })
 export class MyStreakComponent implements OnInit {
   private attendanceService = inject(AttendanceApiService);
+  private advisorService = inject(AdvisorApiService);
 
   isLoading = true;
   historyData: MemberAttendanceHistory = {
@@ -22,6 +25,9 @@ export class MyStreakComponent implements OnInit {
     lastSuccessDate: null,
     history: [],
   };
+
+  recovery: RecoveryAssessment | null = null;
+  loadingRecovery = true;
 
   get streakTier(): string {
     const s = this.historyData.currentStreak;
@@ -34,9 +40,34 @@ export class MyStreakComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.attendanceService.getAttendanceHistory(20).subscribe((res) => {
-      this.historyData = res;
-      this.isLoading = false;
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.isLoading = true;
+    this.attendanceService.getAttendanceHistory(20).subscribe({
+      next: (res) => {
+        this.historyData = res;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
     });
+
+    this.loadingRecovery = true;
+    this.advisorService.getRecoveryAssessment().subscribe({
+      next: (assessment) => {
+        this.recovery = assessment;
+        this.loadingRecovery = false;
+      },
+      error: () => {
+        this.loadingRecovery = false;
+      }
+    });
+  }
+
+  get muscleKeys(): string[] {
+    return this.recovery?.muscleReadiness ? Object.keys(this.recovery.muscleReadiness) : [];
   }
 }

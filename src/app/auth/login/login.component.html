@@ -1,44 +1,89 @@
-﻿<div class="login-container">
-  <div class="login-card">
-    <h1>GymUp</h1>
-    <h2>Login</h2>
-
-    <div *ngIf="error" class="alert alert-error">
-      {{ error }}
+<div class="login-page">
+  <!-- HERO SIDE — bodybuilder image -->
+  <div class="hero-side">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-brand">
+        <div class="hero-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <span>GymUp</span>
+      </div>
+      <div class="hero-quote">
+        <blockquote>"The body achieves what the mind believes."</blockquote>
+        <div class="hero-stats">
+          <div class="stat-item"><span class="stat-num">12K+</span><span class="stat-lbl">Athletes</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-item"><span class="stat-num">98%</span><span class="stat-lbl">Satisfaction</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat-item"><span class="stat-num">Elite</span><span class="stat-lbl">Training</span></div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <form (ngSubmit)="onSubmit()" [disabled]="loading">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          [(ngModel)]="loginData.email"
-          name="email"
-          required
-          placeholder="Enter your email"
-        />
+  <!-- FORM SIDE -->
+  <div class="form-side">
+    <div class="form-container">
+      <div class="form-header">
+        <div class="form-logo">
+          <div class="logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <span class="logo-name">GymUp</span>
+          <span class="logo-tag">MEMBERS CLUB</span>
+        </div>
+        <h1>Welcome Back</h1>
+        <p>Sign in to access your training dashboard and wellness journey.</p>
       </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          [(ngModel)]="loginData.password"
-          name="password"
-          required
-          placeholder="Enter your password"
-        />
+      <div *ngIf="error" class="form-alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>
+        </svg>
+        <span>{{ error }}</span>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block" [disabled]="loading">
-        {{ loading ? 'Logging in...' : 'Login' }}
-      </button>
-    </form>
+      <form (ngSubmit)="onSubmit()" class="auth-form">
+        <div class="field-group">
+          <label for="email">Email Address</label>
+          <div class="field-wrap">
+            <svg class="field-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            <input type="email" id="email" [(ngModel)]="loginData.email" name="email" required placeholder="member@gymup.com" [disabled]="loading"/>
+          </div>
+        </div>
 
-    <div class="register-link">
-      <p>Don't have an account? <a routerLink="/register">Register here</a></p>
+        <div class="field-group">
+          <label for="password">Password</label>
+          <div class="field-wrap">
+            <svg class="field-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input type="password" id="password" [(ngModel)]="loginData.password" name="password" required placeholder="••••••••••" [disabled]="loading"/>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="loading">
+          <span *ngIf="!loading">Sign In</span>
+          <span *ngIf="loading" class="btn-loading">
+            <svg class="spin-icon" viewBox="0 0 24 24" fill="none" width="18" height="18">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-opacity="0.3"></circle>
+              <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            Authenticating...
+          </span>
+        </button>
+      </form>
+
+      <div class="form-footer">
+        <p>New to GymUp? <a routerLink="/register">Create your account →</a></p>
+      </div>
     </div>
   </div>
 </div>

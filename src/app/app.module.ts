@@ -19,6 +19,9 @@ import { ReceptionistLayoutComponent } from './core/layout/receptionist-layout/r
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 
+// AI Coach
+import { AiCoachComponent } from './shared/components/ai-coach/ai-coach.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +30,8 @@ import { RegisterComponent } from './auth/register/register.component';
     CoachLayoutComponent,
     ReceptionistLayoutComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    AiCoachComponent
   ],
   imports: [
     BrowserModule,

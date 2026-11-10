@@ -1,9 +1,12 @@
-﻿import { Injectable, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import {
   Plan,
   Subscription,
+  ExpiringSubscription,
+  SubscriptionStatusResponse,
+  SubscribeResponse,
   CreatePlanRequest,
   UpdatePlanRequest
 } from './shared/plan.model';
@@ -13,12 +16,13 @@ import {
 })
 export class MembershipApiService {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8000/api';
+  private readonly baseUrl = '/api';
 
   // Admin endpoints
   getPlans(): Observable<Plan[]> {
     return this.http.get<Plan[]>(`${this.baseUrl}/admin/plans`).pipe(
-      catchError(() => {
+      catchError((error) => {
+        throw error;
         const fallback: Plan[] = [
           {
             id: 1,
@@ -78,19 +82,37 @@ export class MembershipApiService {
     if (planId) params = params.set('planId', planId);
     if (limit) params = params.set('limit', limit);
 
-    return this.http.get<Subscription[]>(`${this.baseUrl}/admin/subscriptions`, { params });
+    return this.http.get<any[]>(`${this.baseUrl}/admin/subscriptions`, { params }).pipe(
+      map((subs: any[]) => {
+        return (subs || []).map((s: any) => ({
+          ...s,
+          planId: s.plan?.id ?? s.planId,
+          planName: s.plan?.name ?? s.planName,
+          memberId: s.member?.id ?? s.memberId,
+          memberEmail: s.member?.email ?? s.memberEmail,
+          memberFullName: s.member?.fullName ?? s.memberFullName,
+          price: s.plan?.price ?? s.price,
+          accessScope: s.plan?.accessScope ?? s.accessScope,
+        }));
+      }),
+      catchError((error) => { throw error; })
+    );
   }
 
-  getExpiringSubscriptions(days?: number): Observable<Subscription[]> {
+  getExpiringSubscriptions(days?: number): Observable<ExpiringSubscription[]> {
     let params = new HttpParams();
     if (days) params = params.set('days', days);
 
-    return this.http.get<Subscription[]>(`${this.baseUrl}/admin/plans/expiring`, { params });
+    return this.http.get<ExpiringSubscription[]>(`${this.baseUrl}/admin/plans/expiring`, { params }).pipe(
+      catchError((error) => { throw error; })
+    );
   }
 
   // Receptionist endpoints
   getReceptionistPlans(): Observable<Plan[]> {
-    return this.http.get<Plan[]>(`${this.baseUrl}/receptionist/plans`);
+    return this.http.get<Plan[]>(`${this.baseUrl}/receptionist/plans`).pipe(
+      catchError((error) => { throw error; })
+    );
   }
 
   registerWalkInMember(data: { email: string; fullName: string; planId: number }): Observable<any> {
@@ -99,22 +121,35 @@ export class MembershipApiService {
 
   // Member endpoints
   getMemberPlans(): Observable<Plan[]> {
-    return this.http.get<Plan[]>(`${this.baseUrl}/member/membership/plans`);
+    return this.http.get<Plan[]>(`${this.baseUrl}/member/membership/plans`).pipe(
+      catchError((error) => { throw error; })
+    );
   }
 
-  subscribeToPlan(planId: number): Observable<Subscription> {
-    return this.http.post<Subscription>(`${this.baseUrl}/member/membership/subscribe`, { planId });
+  subscribeToPlan(planId: number): Observable<SubscribeResponse> {
+    return this.http.post<SubscribeResponse>(`${this.baseUrl}/member/membership/subscribe`, { planId });
   }
 
-  renewSubscription(planId: number): Observable<Subscription> {
-    return this.http.post<Subscription>(`${this.baseUrl}/member/membership/renew`, { planId });
+  renewSubscription(planId: number): Observable<SubscribeResponse> {
+    return this.http.post<SubscribeResponse>(`${this.baseUrl}/member/membership/renew`, { planId });
   }
 
-  getSubscriptionStatus(): Observable<Subscription> {
-    return this.http.get<Subscription>(`${this.baseUrl}/member/membership/status`);
+  getSubscriptionStatus(): Observable<SubscriptionStatusResponse> {
+    return this.http.get<SubscriptionStatusResponse>(`${this.baseUrl}/member/membership/status`);
   }
 
   getSubscriptionHistory(): Observable<Subscription[]> {
-    return this.http.get<Subscription[]>(`${this.baseUrl}/member/membership/history`);
+    return this.http.get<any[]>(`${this.baseUrl}/member/membership/history`).pipe(
+      map((subs: any[]) => {
+        return (subs || []).map((s: any) => ({
+          ...s,
+          planId: s.plan?.id ?? s.planId,
+          planName: s.plan?.name ?? s.planName,
+          price: s.plan?.price ?? s.price,
+          accessScope: s.plan?.accessScope ?? s.accessScope,
+        }));
+      }),
+      catchError((error) => { throw error; })
+    );
   }
 }

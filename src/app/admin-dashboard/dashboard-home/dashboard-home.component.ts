@@ -1,11 +1,12 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { DashboardApiService, DashboardMetrics } from '../dashboard-api.service';
 
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard-home.component.html',
   styleUrl: './dashboard-home.component.scss'
 })
@@ -14,7 +15,7 @@ export class DashboardHomeComponent implements OnInit {
   loading = true;
   error = '';
 
-  constructor(private dashboardApi: DashboardApiService) {}
+  constructor(private dashboardApi: DashboardApiService) { }
 
   ngOnInit(): void {
     this.loadDashboard();

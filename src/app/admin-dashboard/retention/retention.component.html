@@ -1,0 +1,129 @@
+<div class="retention-page">
+  <!-- Toast -->
+  <div *ngIf="toastMessage" class="toast-alert" [class.success]="toastMessage.type === 'success'" [class.error]="toastMessage.type === 'error'">
+    <span class="toast-icon">{{ toastMessage.type === 'success' ? '⚡' : '⚠️' }}</span>
+    <span class="toast-text">{{ toastMessage.text }}</span>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="badge-tag">
+        <span class="pulse-dot"></span>
+        <span>RETENTION INTELLIGENCE • CHURN PREVENTION ENGINE</span>
+      </div>
+      <h1>Member Retention & Churn Radar</h1>
+      <p class="subtitle">Predictive telemetry identifying members falling off their gym routine, with 1-click re-engagement incentives.</p>
+    </div>
+
+    <!-- Quick Telemetry Stats -->
+    <div class="header-stats">
+      <div class="stat-box danger">
+        <span class="stat-number">{{ criticalCount }}</span>
+        <span class="stat-label">Critical Churn Risk</span>
+      </div>
+      <div class="stat-box warning">
+        <span class="stat-number">{{ highRiskCount }}</span>
+        <span class="stat-label">Elevated Absence</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">{{ atRiskMembers.length }}</span>
+        <span class="stat-label">Total Flagged</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loader-spinner"></div>
+    <p>Running predictive retention scan on member base...</p>
+  </div>
+
+  <!-- Radar Table Card -->
+  <div *ngIf="!loading" class="radar-card">
+    <div class="card-header">
+      <div class="header-title">
+        <h2>At-Risk Member Portfolio</h2>
+        <span class="filter-count">{{ atRiskMembers.length }} athletes requiring attention</span>
+      </div>
+      <button class="btn-refresh" (click)="loadAtRisk()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        <span>Re-scan Database</span>
+      </button>
+    </div>
+
+    <div class="table-container" *ngIf="atRiskMembers.length > 0">
+      <table class="retention-table">
+        <thead>
+          <tr>
+            <th>Member Details</th>
+            <th>Active Plan</th>
+            <th>Absence Window</th>
+            <th>Risk Severity</th>
+            <th>AI Suggested Intervention</th>
+            <th>Retention Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let member of atRiskMembers" [class.critical]="member.riskLevel === 'CRITICAL_CHURN'">
+            <td class="member-cell">
+              <div class="member-info">
+                <span class="member-avatar">{{ member.name[0] }}</span>
+                <div>
+                  <h4 class="member-name">{{ member.name }}</h4>
+                  <span class="member-email">{{ member.email }}</span>
+                </div>
+              </div>
+            </td>
+
+            <td class="plan-cell">
+              <span class="plan-badge">{{ member.plan || 'Standard Gym' }}</span>
+            </td>
+
+            <td class="days-cell">
+              <div class="absence-indicator">
+                <span class="days-val">{{ member.daysSinceLastVisit }} days</span>
+                <span class="days-sub">Last seen: {{ member.lastVisitDate }}</span>
+              </div>
+            </td>
+
+            <td class="risk-cell">
+              <span class="risk-badge critical" *ngIf="member.riskLevel === 'CRITICAL_CHURN'">
+                <span class="pulse-red"></span> CRITICAL CHURN
+              </span>
+              <span class="risk-badge high" *ngIf="member.riskLevel === 'HIGH_RISK'">
+                ⚠️ HIGH RISK
+              </span>
+              <span class="risk-badge moderate" *ngIf="member.riskLevel === 'MODERATE_RISK'">
+                🟡 MODERATE
+              </span>
+            </td>
+
+            <td class="strategy-cell">
+              <p class="strategy-text">{{ member.suggestedAction }}</p>
+            </td>
+
+            <td class="action-cell">
+              <button class="btn-nudge" 
+                      (click)="sendNudge(member)" 
+                      [disabled]="nudgingMemberId === member.memberId">
+                <span *ngIf="nudgingMemberId !== member.memberId">Send Re-engagement Pass</span>
+                <span *ngIf="nudgingMemberId === member.memberId">Delivering...</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="atRiskMembers.length === 0" class="empty-state">
+      <div class="empty-icon">🎉</div>
+      <h3>Exceptional Member Retention!</h3>
+      <p>All active gym members have checked in recently. No churn anomalies detected in the last scan.</p>
+    </div>
+  </div>
+</div>
+

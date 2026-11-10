@@ -16,7 +16,7 @@ import {
 })
 export class HiringApiService {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8000/api';
+  private readonly baseUrl = '/api';
 
   /**
    * Public: List open job postings (GET /api/public/jobs)
@@ -25,7 +25,8 @@ export class HiringApiService {
     return this.http
       .get<JobPosting[]>(`${this.baseUrl}/public/jobs`)
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: JobPosting[] = [
             {
               id: 1,
@@ -71,7 +72,8 @@ export class HiringApiService {
     return this.http
       .post<ApplyJobResponse>(`${this.baseUrl}/public/jobs/${postingId}/apply`, payload)
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: ApplyJobResponse = {
             message:
               'Application submitted successfully. A confirmation email has been sent to your inbox.',
@@ -96,7 +98,8 @@ export class HiringApiService {
     return this.http
       .get<JobPosting[]>(`${this.baseUrl}/admin/job-postings`)
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: JobPosting[] = [
             {
               id: 1,
@@ -132,7 +135,8 @@ export class HiringApiService {
     return this.http
       .post(`${this.baseUrl}/admin/job-postings`, { positionType })
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           return of({
             message: 'Job posting created successfully.',
             jobPosting: {
@@ -153,7 +157,8 @@ export class HiringApiService {
     return this.http
       .patch(`${this.baseUrl}/admin/job-postings/${postingId}/close`, {})
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           return of({
             message: 'Job posting closed successfully.',
             status: 'CLOSED',
@@ -172,7 +177,8 @@ export class HiringApiService {
     return this.http
       .get<Application[]>(`${this.baseUrl}/admin/applications`, { params })
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: Application[] = [
             {
               id: 101,
@@ -231,7 +237,8 @@ export class HiringApiService {
     return this.http
       .post<AcceptApplicationResponse>(`${this.baseUrl}/admin/applications/${id}/accept`, {})
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           return of({
             message:
               'Application accepted successfully. Staff account created and credentials dispatched.',
@@ -254,7 +261,8 @@ export class HiringApiService {
     return this.http
       .post<RejectApplicationResponse>(`${this.baseUrl}/admin/applications/${id}/reject`, {})
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           return of({
             message: 'Application rejected. Candidate informed via email.',
             applicationStatus: 'REJECTED' as ApplicationStatus,

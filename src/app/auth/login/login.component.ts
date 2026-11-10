@@ -52,7 +52,8 @@ export class LoginComponent {
         }
       },
       error: (err) => {
-        this.error = err.error?.error || 'Login failed. Please try again.';
+        const apiError = typeof err.error === 'string' ? err.error : err.error?.error;
+        this.error = apiError || `Login failed (${err.status || 'network error'}). Please try again.`;
         this.loading = false;
       }
     });

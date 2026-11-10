@@ -12,6 +12,7 @@
     <div class="payment-form-card">
       <div class="card-section">
         <h2 class="section-title">Select Payment Method</h2>
+        <p class="payment-notice">Online payment is unavailable until a PCI-compliant payment provider is connected. No card details are sent to GymUp.</p>
         <div class="method-selector">
           <button
             type="button"
@@ -128,14 +129,11 @@
         </div>
 
         <button
-          type="submit"
+          type="button"
           class="btn-pay"
-          [disabled]="isLoading"
+          disabled
         >
-          <span *ngIf="!isLoading">Pay ${{ total }} & Activate Plan</span>
-          <span *ngIf="isLoading" class="spinner-container">
-            <span class="spinner"></span> Processing payment...
-          </span>
+          Online payments unavailable
         </button>
 
         <div class="security-guarantee">

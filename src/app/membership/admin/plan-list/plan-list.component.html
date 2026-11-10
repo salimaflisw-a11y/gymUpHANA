@@ -1,49 +1,100 @@
-﻿<div class="plan-list">
+<div class="plan-list-page">
   <div class="page-header">
-    <h1>Membership Plans</h1>
-    <button (click)="createPlan()" class="btn btn-primary">Create New Plan</button>
+    <div class="header-info">
+      <div class="badge badge-primary">PRICING ARCHITECTURE</div>
+      <h1>Membership Tier Portfolio</h1>
+      <p>Configure subscription plans, access permissions, and billing durations.</p>
+    </div>
+    <button (click)="createPlan()" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      <span>Deploy New Plan</span>
+    </button>
   </div>
 
-  <div *ngIf="loading" class="loading">Loading plans...</div>
-
-  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
-
-  <div *ngIf="!loading && plans.length === 0" class="no-data">
-    No plans found. Create your first plan.
+  <div *ngIf="loading" class="loading-state">
+    <div class="quantum-loader"></div>
+    <p>Loading membership plans...</p>
   </div>
 
-  <table *ngIf="!loading && plans.length > 0" class="table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Duration</th>
-        <th>Access Scope</th>
-        <th>Max Members</th>
-        <th>Current Members</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let plan of plans">
-        <td>{{ plan.name }}</td>
-        <td>${{ plan.price.toFixed(2) }}</td>
-        <td>{{ plan.durationDays }} days</td>
-        <td>{{ getAccessScopeLabel(plan.accessScope) }}</td>
-        <td>{{ plan.maxMembers || 'Unlimited' }}</td>
-        <td>{{ plan.currentMembersCount || 0 }}</td>
-        <td>
-          <span class="badge" [ngClass]="plan.isActive ? 'badge-success' : 'badge-danger'">
-            {{ plan.isActive ? 'Active' : 'Inactive' }}
-          </span>
-        </td>
-        <td>
-          <button (click)="editPlan(plan.id)" class="btn btn-primary" style="margin-right: 5px;">Edit</button>
-          <button *ngIf="!plan.isActive" (click)="activatePlan(plan.id)" class="btn btn-success" style="margin-right: 5px;">Activate</button>
-          <button *ngIf="plan.isActive" (click)="deactivatePlan(plan.id)" class="btn btn-danger">Deactivate</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div *ngIf="error" class="alert alert-error">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="!loading && plans.length === 0" class="no-data-card glass-panel">
+    <div class="empty-icon">📁</div>
+    <h3>No Membership Plans Deployed</h3>
+    <p>Deploy your first membership tier to start registering athletes.</p>
+    <button (click)="createPlan()" class="btn btn-primary">Create First Plan</button>
+  </div>
+
+  <div *ngIf="!loading && plans.length > 0" class="plans-container glass-panel">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Plan Profile</th>
+            <th>Billing Price</th>
+            <th>Validity Cycle</th>
+            <th>Facility Access Scope</th>
+            <th>Roster Capacity</th>
+            <th>Lifecycle Status</th>
+            <th class="text-right">Controls</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let plan of plans">
+            <td>
+              <div class="plan-name-cell">
+                <span class="plan-name">{{ plan.name }}</span>
+                <span class="plan-id">ID: #{{ plan.id }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="price-tag">${{ plan.price.toFixed(2) }}</span>
+            </td>
+            <td>
+              <span class="duration-chip">{{ plan.durationDays }} Days</span>
+            </td>
+            <td>
+              <span class="scope-pill" [ngClass]="plan.accessScope === 'BOTH' ? 'scope-all' : (plan.accessScope === 'CLASSES' ? 'scope-classes' : 'scope-gym')">
+                {{ getAccessScopeLabel(plan.accessScope) }}
+              </span>
+            </td>
+            <td>
+              <span class="capacity-text">
+                {{ plan.maxMembers ? (plan.currentMembersCount || 0) + ' / ' + plan.maxMembers : 'Unlimited' }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="plan.isActive ? 'badge-success' : 'badge-danger'">
+                <span class="dot" [ngClass]="plan.isActive ? 'dot-active' : 'dot-inactive'"></span>
+                {{ plan.isActive ? 'Live' : 'Archived' }}
+              </span>
+            </td>
+            <td class="text-right">
+              <div class="actions-group">
+                <button (click)="editPlan(plan.id)" class="btn-action edit" title="Edit Plan">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                  </svg>
+                  <span>Edit</span>
+                </button>
+                <button *ngIf="!plan.isActive" (click)="activatePlan(plan.id)" class="btn-action activate" title="Activate">
+                  <span>Activate</span>
+                </button>
+                <button *ngIf="plan.isActive" (click)="deactivatePlan(plan.id)" class="btn-action deactivate" title="Deactivate">
+                  <span>Deactivate</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

@@ -1,55 +1,213 @@
-﻿<div class="dashboard">
-  <h1>Admin Dashboard</h1>
-
-  <div *ngIf="loading" class="loading">Loading dashboard...</div>
-
-  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
-
-  <div *ngIf="metrics" class="metrics-grid">
-    <div class="metric-card">
-      <h3>Active Members</h3>
-      <p class="metric-value">{{ metrics.activeMembers }}</p>
-      <p class="metric-label">Total: {{ metrics.totalMembers }}</p>
+<div class="dashboard-page">
+  <div class="dashboard-header">
+    <div class="header-titles">
+      <div class="status-chip">
+        <span class="pulse-beacon"></span>
+        <span>LIVE TELEMETRY • FACILITY REAL-TIME</span>
+      </div>
+      <h1>Command Center Overview</h1>
+      <p class="subtitle">Real-time occupancy, revenue streams, and athletic engagement metrics.</p>
     </div>
-
-    <div class="metric-card">
-      <h3>Class Occupancy</h3>
-      <p class="metric-value">{{ metrics.classOccupancyRate }}%</p>
-      <p class="metric-label">Average utilization</p>
-    </div>
-
-    <div class="metric-card">
-      <h3>Monthly Revenue</h3>
-      <p class="metric-value">${{ metrics.monthlyRevenue.total.toFixed(2) }}</p>
-      <p class="metric-label">Online: ${{ metrics.monthlyRevenue.online.toFixed(2) }} | Cash: ${{ metrics.monthlyRevenue.cash.toFixed(2) }}</p>
-    </div>
-
-    <div class="metric-card">
-      <h3>Expiring Memberships</h3>
-      <p class="metric-value">{{ metrics.expiringMemberships }}</p>
-      <p class="metric-label">Expiring within 7 days</p>
+    <div class="header-actions">
+      <button class="btn btn-outline" (click)="loadDashboard()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        <span>Refresh Feed</span>
+      </button>
+      <a routerLink="/admin/plans/new" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>New Plan</span>
+      </a>
     </div>
   </div>
 
-  <div *ngIf="metrics" class="streak-leaderboard">
-    <h2>Top Streaks</h2>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Member</th>
-          <th>Streak</th>
-          <th>Last Success</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of metrics.topStreaks; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ item.memberName }}</td>
-          <td>{{ item.streak }} days</td>
-          <td>{{ item.lastSuccessDate }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div *ngIf="loading" class="loading-state">
+    <div class="quantum-loader"></div>
+    <p>Synthesizing telemetry data...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="metrics && !loading" class="dashboard-content">
+    <!-- Key Performance Indicators -->
+    <div class="metrics-grid">
+      <!-- Active Members KPI -->
+      <div class="metric-card card-cyan">
+        <div class="metric-top">
+          <div class="icon-orb cyan">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <span class="metric-badge positive">+12.4%</span>
+        </div>
+        <div class="metric-body">
+          <span class="metric-label">ACTIVE ATHLETES</span>
+          <h2 class="metric-value">{{ metrics.activeMembers }}</h2>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" [style.width.%]="(metrics.activeMembers / (metrics.totalMembers || 1)) * 100"></div>
+          </div>
+          <span class="metric-sub">{{ metrics.totalMembers }} total registered in database</span>
+        </div>
+      </div>
+
+      <!-- Occupancy KPI -->
+      <div class="metric-card card-emerald">
+        <div class="metric-top">
+          <div class="icon-orb emerald">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 20V10M12 20V4M6 20v-6"/>
+            </svg>
+          </div>
+          <span class="metric-badge status-good">OPTIMAL</span>
+        </div>
+        <div class="metric-body">
+          <span class="metric-label">STUDIO OCCUPANCY</span>
+          <h2 class="metric-value">{{ metrics.classOccupancyRate }}%</h2>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill emerald" [style.width.%]="metrics.classOccupancyRate"></div>
+          </div>
+          <span class="metric-sub">Across all scheduled daily class sessions</span>
+        </div>
+      </div>
+
+      <!-- Monthly Revenue KPI -->
+      <div class="metric-card card-violet">
+        <div class="metric-top">
+          <div class="icon-orb violet">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <span class="metric-badge revenue-badge">THIS MONTH</span>
+        </div>
+        <div class="metric-body">
+          <span class="metric-label">TOTAL REVENUE</span>
+          <h2 class="metric-value">${{ metrics.monthlyRevenue.total.toFixed(2) }}</h2>
+          <div class="revenue-split">
+            <span class="pill-online">Online: ${{ metrics.monthlyRevenue.online.toFixed(2) }}</span>
+            <span class="pill-cash">Cash: ${{ metrics.monthlyRevenue.cash.toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expiring Subscriptions KPI -->
+      <div class="metric-card card-amber">
+        <div class="metric-top">
+          <div class="icon-orb amber">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <span class="metric-badge warning">ATTENTION</span>
+        </div>
+        <div class="metric-body">
+          <span class="metric-label">EXPIRING PASSES</span>
+          <h2 class="metric-value">{{ metrics.expiringMemberships }}</h2>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill amber" style="width: 45%;"></div>
+          </div>
+          <span class="metric-sub">Subscriptions expiring within 7 days</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Action Launchpad -->
+    <div class="action-launchpad glass-panel">
+      <div class="launchpad-item" routerLink="/admin/plans">
+        <div class="launchpad-icon">📋</div>
+        <div class="launchpad-text">
+          <h4>Plan Catalog</h4>
+          <p>Inspect & tune membership tiers</p>
+        </div>
+      </div>
+      <div class="launchpad-item" routerLink="/admin/classes">
+        <div class="launchpad-icon">🏋️‍♂️</div>
+        <div class="launchpad-text">
+          <h4>Studio Scheduling</h4>
+          <p>Assign coaches & rooms</p>
+        </div>
+      </div>
+      <div class="launchpad-item" routerLink="/admin/revenue">
+        <div class="launchpad-icon">💎</div>
+        <div class="launchpad-text">
+          <h4>Financial Reports</h4>
+          <p>Cash flows & payment history</p>
+        </div>
+      </div>
+      <div class="launchpad-item" routerLink="/admin/applications">
+        <div class="launchpad-icon">⚡</div>
+        <div class="launchpad-text">
+          <h4>Recruitment Hub</h4>
+          <p>Review incoming coaches</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div class="streak-leaderboard-card glass-panel">
+      <div class="card-header-flex">
+        <div class="title-block">
+          <div class="badge badge-primary">GAMIFICATION ENGINE</div>
+          <h3>Top Member Attendance Streaks</h3>
+          <p>Recognizing the most disciplined athletes maintaining daily workout streaks.</p>
+        </div>
+        <a routerLink="/admin/streaks" class="btn btn-outline btn-sm">Full Leaderboard →</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Athlete</th>
+              <th>Consistency Streak</th>
+              <th>Last Workout Scan</th>
+              <th>Status Badge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of metrics.topStreaks; let i = index">
+              <td>
+                <span class="rank-tag" [class.rank-gold]="i === 0" [class.rank-silver]="i === 1" [class.rank-bronze]="i === 2">
+                  <span *ngIf="i === 0">🥇 #1</span>
+                  <span *ngIf="i === 1">🥈 #2</span>
+                  <span *ngIf="i === 2">🥉 #3</span>
+                  <span *ngIf="i > 2">#{{ i + 1 }}</span>
+                </span>
+              </td>
+              <td>
+                <div class="athlete-cell">
+                  <div class="avatar-disc">{{ item.memberName[0] }}</div>
+                  <span class="athlete-name">{{ item.memberName }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="streak-pill">
+                  <span class="flame">🔥</span>
+                  <span class="streak-number">{{ item.streak }} Days</span>
+                </div>
+              </td>
+              <td>
+                <span class="date-chip">{{ item.lastSuccessDate || 'Today' }}</span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="item.streak >= 30 ? 'badge-warning' : (item.streak >= 20 ? 'badge-danger' : 'badge-success')">
+                  {{ item.streak >= 30 ? '👑 Iron Legend' : (item.streak >= 20 ? '⚡ Beast Mode' : '💪 Consistent') }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>

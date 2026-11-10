@@ -1,1 +1,83 @@
-﻿<!-- class-schedule works! -->
+<div class="schedule-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <div class="badge badge-primary">STUDIO SESSIONS</div>
+      <h1>Master Class Schedule</h1>
+      <p>Reserve your spot in high-energy trainer-led workouts and studio experiences.</p>
+    </div>
+    <a routerLink="/member/bookings" class="btn btn-outline">My Active Reservations →</a>
+  </div>
+
+  <!-- Booking Confirmation Toast -->
+  <div *ngIf="bookingToast" class="toast-banner" [ngClass]="bookingToast.isWaitlist ? 'toast-waitlist' : 'toast-success'">
+    <span class="icon">{{ bookingToast.isWaitlist ? '⏳' : '⚡' }}</span>
+    <span>{{ bookingToast.message }}</span>
+  </div>
+
+  <!-- Day Filter Pills -->
+  <div class="days-filter-bar glass-panel">
+    <button
+      *ngFor="let day of daysOfWeek"
+      class="day-filter-btn"
+      [class.active]="selectedDay === day"
+      (click)="filterByDay(day)"
+    >
+      {{ day === 'ALL' ? 'All Days' : day.substring(0, 3) }}
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="quantum-loader"></div>
+    <p>Loading scheduled sessions...</p>
+  </div>
+
+  <div *ngIf="!loading && filteredClasses.length === 0" class="empty-state glass-panel">
+    <p>No studio classes scheduled for {{ selectedDay }}.</p>
+  </div>
+
+  <!-- Classes Grid -->
+  <div *ngIf="!loading && filteredClasses.length > 0" class="classes-grid">
+    <div *ngFor="let c of filteredClasses" class="class-card glass-panel">
+      <div class="card-head">
+        <span class="day-badge">{{ c.dayOfWeek }}</span>
+        <span class="spots-badge" [ngClass]="c.isFull ? 'spots-full' : 'spots-available'">
+          {{ c.isFull ? 'WAITLIST ONLY' : c.availableSpots + ' SPOTS OPEN' }}
+        </span>
+      </div>
+
+      <h3 class="class-title">{{ c.name }}</h3>
+
+      <div class="meta-row">
+        <span class="time-meta">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          {{ c.startTime }} - {{ c.endTime }}
+        </span>
+        <span class="room-meta">📍 {{ c.room }}</span>
+      </div>
+
+      <div class="coach-card">
+        <div class="coach-avatar">{{ (c.coachName || 'C')[0] }}</div>
+        <div>
+          <span class="coach-title">TRAINER</span>
+          <p class="coach-name">{{ c.coachName }}</p>
+        </div>
+      </div>
+
+      <div class="card-action">
+        <button
+          (click)="book(c)"
+          class="btn btn-block"
+          [ngClass]="c.isFull ? 'btn-outline' : 'btn-primary'"
+          [disabled]="bookingInProgressId === c.id"
+        >
+          <span *ngIf="bookingInProgressId !== c.id">
+            {{ c.isFull ? 'Join Class Waitlist' : 'Reserve Spot Now' }}
+          </span>
+          <span *ngIf="bookingInProgressId === c.id">Securing Spot...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

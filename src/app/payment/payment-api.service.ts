@@ -15,7 +15,7 @@ import {
 })
 export class PaymentApiService {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8000/api';
+  private readonly baseUrl = '/api';
 
   /**
    * Member Online Checkout (POST /api/member/payments/checkout)
@@ -24,7 +24,8 @@ export class PaymentApiService {
     return this.http
       .post<CheckoutResponse>(`${this.baseUrl}/member/payments/checkout`, request)
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           // Graceful fallback for UI testing / preview
           const fallback: CheckoutResponse = {
             message: 'Online payment successful. Subscription activated!',
@@ -54,7 +55,8 @@ export class PaymentApiService {
     return this.http
       .get<Payment[]>(`${this.baseUrl}/member/payments/history`)
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: Payment[] = [
             {
               id: 101,
@@ -90,7 +92,8 @@ export class PaymentApiService {
     return this.http
       .post<CashPaymentResponse>(`${this.baseUrl}/receptionist/payments/cash`, request)
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: CashPaymentResponse = {
             message: 'Cash payment recorded and subscription activated successfully.',
             payment: {
@@ -124,7 +127,8 @@ export class PaymentApiService {
     return this.http
       .get<RevenueSummary>(`${this.baseUrl}/admin/revenue/summary`, { params })
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: RevenueSummary = {
             onlineRevenue: 14280.0,
             cashRevenue: 4950.0,
@@ -146,7 +150,8 @@ export class PaymentApiService {
     return this.http
       .get<Payment[]>(`${this.baseUrl}/admin/revenue/payments`, { params })
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: Payment[] = [
             {
               id: 201,

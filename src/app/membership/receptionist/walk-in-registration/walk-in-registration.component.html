@@ -1,1 +1,105 @@
-﻿<!-- walk-in-registration works! -->
+<div class="registration-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <div class="badge badge-warning">FRONT DESK DESK RECEPTION</div>
+      <h1>Walk-In Member Onboarding</h1>
+      <p>Instant athlete enrollment, plan assignment, and payment dispatch.</p>
+    </div>
+  </div>
+
+  <div *ngIf="registrationSuccess" class="success-card glass-panel">
+    <div class="success-top">
+      <div class="check-orb">✓</div>
+      <div>
+        <h2>Athlete Successfully Enrolled!</h2>
+        <p>Member profile created with active enrollment contract.</p>
+      </div>
+    </div>
+
+    <div class="credentials-box">
+      <div class="cred-row">
+        <span class="cred-label">ATHLETE NAME</span>
+        <span class="cred-val">{{ registrationSuccess.member.fullName }}</span>
+      </div>
+      <div class="cred-row">
+        <span class="cred-label">EMAIL ADDRESS</span>
+        <span class="cred-val">{{ registrationSuccess.member.email }}</span>
+      </div>
+      <div class="cred-row">
+        <span class="cred-label">SELECTED PLAN</span>
+        <span class="cred-val highlight">{{ registrationSuccess.subscription.planName }} (${{ registrationSuccess.subscription.price }})</span>
+      </div>
+      <div *ngIf="registrationSuccess.temporaryPassword" class="cred-row pass-row">
+        <span class="cred-label">TEMPORARY PASSKEY</span>
+        <code class="cred-pass">{{ registrationSuccess.temporaryPassword }}</code>
+      </div>
+    </div>
+
+    <div class="success-actions">
+      <button (click)="proceedToCashPayment()" class="btn btn-primary">
+        <span>Open Cash Terminal to Collect ${{ registrationSuccess.subscription.price }} →</span>
+      </button>
+      <button (click)="resetForm()" class="btn btn-outline">
+        <span>Register Another Walk-In</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!registrationSuccess" class="form-container glass-panel">
+    <div *ngIf="error" class="alert alert-error">
+      <span>{{ error }}</span>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="walkin-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fullName">Athlete Full Name</label>
+          <input
+            type="text"
+            id="fullName"
+            [(ngModel)]="formData.fullName"
+            name="fullName"
+            required
+            placeholder="e.g. Liam Vance"
+            [disabled]="isSubmitting"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Athlete Email Address</label>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="formData.email"
+            name="email"
+            required
+            placeholder="e.g. liam.v@example.com"
+            [disabled]="isSubmitting"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="planId">Select Membership Pass</label>
+        <select
+          id="planId"
+          [(ngModel)]="formData.planId"
+          name="planId"
+          required
+          [disabled]="isSubmitting || loadingPlans"
+        >
+          <option [ngValue]="null" disabled>Select a plan...</option>
+          <option *ngFor="let p of plans" [ngValue]="p.id">
+            {{ p.name }} — ${{ p.price }} ({{ p.durationDays }} Days) [{{ p.accessScope }}]
+          </option>
+        </select>
+      </div>
+
+      <div class="form-footer">
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="isSubmitting">
+          <span>{{ isSubmitting ? 'Provisioning Account...' : 'Enroll Athlete & Generate Pass' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

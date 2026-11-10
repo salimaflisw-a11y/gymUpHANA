@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import {
   CheckInResult,
   DayOfWeek,
@@ -14,7 +14,7 @@ import {
 })
 export class AttendanceApiService {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8000/api';
+  private readonly baseUrl = '/api';
 
   /**
    * Member QR Check-in (POST /api/attendance/check-in)
@@ -23,7 +23,8 @@ export class AttendanceApiService {
     return this.http
       .post<CheckInResult>(`${this.baseUrl}/attendance/check-in`, {})
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: CheckInResult = {
             success: true,
             message:
@@ -49,7 +50,8 @@ export class AttendanceApiService {
     return this.http
       .get<MemberAttendanceHistory>(`${this.baseUrl}/attendance/history?limit=${limit}`)
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const now = Date.now();
           const fallback: MemberAttendanceHistory = {
             totalAttendances: 42,
@@ -96,7 +98,8 @@ export class AttendanceApiService {
     return this.http
       .get<WeeklySchedule>(`${this.baseUrl}/attendance/schedule`)
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           const fallback: WeeklySchedule = {
             memberId: 1,
             weekDays: ['MONDAY', 'WEDNESDAY', 'FRIDAY', 'SATURDAY'],
@@ -117,7 +120,8 @@ export class AttendanceApiService {
         { weekDays }
       )
       .pipe(
-        catchError(() => {
+        catchError((error) => {
+          throw error;
           return of({
             success: true,
             message: 'Weekly schedule updated successfully.',
@@ -136,9 +140,20 @@ export class AttendanceApiService {
    */
   getLeaderboard(): Observable<StreakLeaderboardItem[]> {
     return this.http
-      .get<StreakLeaderboardItem[]>(`${this.baseUrl}/admin/dashboard`)
+      .get<any>(`${this.baseUrl}/admin/dashboard`)
       .pipe(
-        catchError(() => {
+        map((res: any) => {
+          if (Array.isArray(res)) return res;
+          if (res && Array.isArray(res.topStreaks)) {
+            return res.topStreaks.map((item: any) => ({
+              ...item,
+              badge: item.badge || (item.streak >= 30 ? '👑 Iron Gym Legend' : item.streak >= 20 ? '🔥 Beast Mode' : item.streak >= 14 ? '⚡ Unstoppable' : '💪 Dedicated Athlete')
+            }));
+          }
+          return [];
+        }),
+        catchError((error) => {
+          throw error;
           const fallback: StreakLeaderboardItem[] = [
             {
               memberId: 101,

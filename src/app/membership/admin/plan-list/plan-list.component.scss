@@ -1,27 +1,218 @@
-﻿.plan-list {
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+.plan-list-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  .header-info {
+    .badge {
+      margin-bottom: 8px;
+    }
 
     h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 6px 0;
+      color: #ffffff;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
       margin: 0;
-      color: #333;
     }
   }
 }
 
-.loading {
-  text-align: center;
-  padding: 40px;
-  font-size: 18px;
-  color: #666;
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+  color: var(--text-dim);
+
+  .quantum-loader {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(56, 189, 248, 0.15);
+    border-top-color: var(--neon-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
 }
 
-.no-data {
+.no-data-card {
   text-align: center;
-  padding: 40px;
-  color: #999;
-  font-size: 16px;
+  padding: 60px 20px;
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: #ffffff;
+  }
+
+  p {
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+}
+
+.plans-container {
+  padding: 24px;
+}
+
+.plan-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .plan-name {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 0.975rem;
+  }
+
+  .plan-id {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+}
+
+.price-tag {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.duration-chip {
+  font-size: 0.825rem;
+  font-family: var(--font-mono);
+  color: var(--text-sub);
+}
+
+.scope-pill {
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+
+  &.scope-all {
+    background: rgba(139, 92, 246, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+
+  &.scope-classes {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+
+  &.scope-gym {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+}
+
+.capacity-text {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.dot-active {
+    background: #34d399;
+    box-shadow: 0 0 6px #34d399;
+  }
+
+  &.dot-inactive {
+    background: #fb7185;
+  }
+}
+
+.actions-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--radius-xs);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+
+    &.edit {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-light);
+      color: #ffffff;
+
+      &:hover {
+        background: rgba(56, 189, 248, 0.15);
+        border-color: var(--neon-blue);
+        color: var(--neon-blue);
+      }
+    }
+
+    &.activate {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #34d399;
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.25);
+        border-color: #34d399;
+      }
+    }
+
+    &.deactivate {
+      background: rgba(244, 63, 94, 0.12);
+      border-color: rgba(244, 63, 94, 0.25);
+      color: #fb7185;
+
+      &:hover {
+        background: rgba(244, 63, 94, 0.25);
+        border-color: #fb7185;
+      }
+    }
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

@@ -1,7 +1,8 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { MembershipApiService, Plan } from '../../membership-api.service';
+import { MembershipApiService } from '../../membership-api.service';
+import { Plan } from '../../shared/plan.model';
 
 @Component({
   selector: 'app-plan-list',

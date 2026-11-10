@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthApiService } from '../auth-api.service';
 import { AuthService } from '../auth.service';
@@ -40,7 +40,7 @@ export class RegisterComponent {
     this.error = '';
 
     this.authApi.register(this.registerData).subscribe({
-      next: (user) => {
+      next: (_res) => {
         // Auto-login after registration
         this.authApi.login({
           email: this.registerData.email,
@@ -59,7 +59,8 @@ export class RegisterComponent {
         });
       },
       error: (err) => {
-        this.error = err.error?.error || 'Registration failed. Please try again.';
+        const apiError = typeof err.error === 'string' ? err.error : err.error?.error;
+        this.error = apiError || `Registration failed (${err.status || 'network error'}). Please try again.`;
         this.loading = false;
       }
     });

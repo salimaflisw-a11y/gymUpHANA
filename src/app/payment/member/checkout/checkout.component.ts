@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PaymentApiService } from '../../payment-api.service';
 import { CheckoutResponse, Payment } from '../../shared/payment.model';
 
@@ -14,13 +14,14 @@ import { CheckoutResponse, Payment } from '../../shared/payment.model';
 })
 export class CheckoutComponent implements OnInit {
   private paymentService = inject(PaymentApiService);
+  private route = inject(ActivatedRoute);
 
   // Selected plan to checkout
   selectedPlan = {
-    subscriptionId: 42,
-    name: 'Pro Fitness All-Access',
+    subscriptionId: 0,
+    name: '',
     durationDays: 30,
-    price: 59.99,
+    price: 0,
     taxRate: 0.08,
     features: [
       'Unlimited gym floor & locker room access',
@@ -31,11 +32,11 @@ export class CheckoutComponent implements OnInit {
   };
 
   // Payment form state
-  cardHolder = 'Alex Morgan';
-  cardNumber = '4242 •••• •••• 4242';
-  expiry = '12/28';
-  cvv = '389';
-  billingZip = '90210';
+  cardHolder = '';
+  cardNumber = '';
+  expiry = '';
+  cvv = '';
+  billingZip = '';
   selectedMethod: 'card' | 'apple-pay' | 'google-pay' = 'card';
 
   isLoading = false;
@@ -56,6 +57,16 @@ export class CheckoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const subscriptionId = Number(this.route.snapshot.queryParamMap.get('subscriptionId'));
+    const price = Number(this.route.snapshot.queryParamMap.get('price'));
+    const planName = this.route.snapshot.queryParamMap.get('planName');
+    if (!Number.isInteger(subscriptionId) || subscriptionId <= 0 || !Number.isFinite(price) || price < 0 || !planName) {
+      this.errorMessage = 'Select a membership plan before opening checkout.';
+      return;
+    }
+    this.selectedPlan.subscriptionId = subscriptionId;
+    this.selectedPlan.price = price;
+    this.selectedPlan.name = planName;
     this.loadHistory();
   }
 
@@ -66,6 +77,10 @@ export class CheckoutComponent implements OnInit {
   }
 
   submitPayment(): void {
+    if (!this.selectedPlan.subscriptionId) {
+      this.errorMessage = 'No pending subscription was selected.';
+      return;
+    }
     this.isLoading = true;
     this.errorMessage = null;
 
