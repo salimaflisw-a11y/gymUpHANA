@@ -1,0 +1,23 @@
+# Local credentials and environment files
+**/.env
+**/.env.*
+!**/.env.example
+**/firebase_credentials.json
+!**/firebase_credentials.json.example
+configfirebasefirebase_credentials.json
+
+# Dependencies, builds, and caches
+**/node_modules/
+**/dist/
+**/.angular/
+**/vendor/
+**/var/
+**/coverage/
+
+# Original nested project folders kept as local backups
+/GymUp-backend/
+/GymUp_front-main/
+
+# OS files
+.DS_Store
+Thumbs.db
