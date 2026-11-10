@@ -1,0 +1,91 @@
+<div class="coach-classes-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <div class="badge badge-primary">COACH ROSTER COCKPIT</div>
+      <h1>Trainer Sessions & Attendance Roster</h1>
+      <p>Inspect your weekly coaching sessions and registered student athletes.</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="quantum-loader"></div>
+    <p>Loading your assigned sessions...</p>
+  </div>
+
+  <div *ngIf="!loading" class="schedule-layout">
+    <!-- Classes list column -->
+    <div class="classes-column">
+      <h3>Assigned Sessions ({{ classes.length }})</h3>
+      <div class="session-cards-list">
+        <div
+          *ngFor="let s of classes"
+          class="session-card glass-panel"
+          [class.selected]="selectedClass?.id === s.id"
+          (click)="selectClass(s)"
+        >
+          <div class="session-top">
+            <span class="day-chip">{{ s.dayOfWeek }}</span>
+            <span class="time-range">{{ s.startTime }} - {{ s.endTime }}</span>
+          </div>
+          <h4 class="session-name">{{ s.name }}</h4>
+          <div class="session-footer">
+            <span class="room-name">📍 {{ s.room }}</span>
+            <span class="enrolled-badge">{{ s.bookingCount || 0 }} / {{ s.capacity }} Booked</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roster details column -->
+    <div class="roster-column glass-panel">
+      <div *ngIf="selectedClass" class="roster-header">
+        <div>
+          <span class="section-tag">LIVE ROSTER FOR</span>
+          <h2>{{ selectedClass.name }}</h2>
+          <p class="time-room-meta">{{ selectedClass.dayOfWeek }} • {{ selectedClass.startTime }} - {{ selectedClass.endTime }} • {{ selectedClass.room }}</p>
+        </div>
+        <div class="capacity-stat">
+          <span class="stat-number">{{ enrolledMembers.length }}</span>
+          <span class="stat-label">Confirmed Athletes</span>
+        </div>
+      </div>
+
+      <div *ngIf="loadingMembers" class="loading-state">
+        <div class="quantum-loader"></div>
+        <p>Fetching enrolled athlete roster...</p>
+      </div>
+
+      <div *ngIf="!loadingMembers && enrolledMembers.length === 0" class="empty-roster">
+        <p>No confirmed bookings yet for this session.</p>
+      </div>
+
+      <div *ngIf="!loadingMembers && enrolledMembers.length > 0" class="members-table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Athlete</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Booked Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of enrolledMembers">
+              <td>
+                <div class="athlete-info">
+                  <div class="avatar-disc">{{ (m.memberFullName || 'A')[0] }}</div>
+                  <strong>{{ m.memberFullName }}</strong>
+                </div>
+              </td>
+              <td>{{ m.memberEmail }}</td>
+              <td>
+                <span class="badge badge-success">CONFIRMED</span>
+              </td>
+              <td>{{ m.bookedAt | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<div class="class-form-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <div class="badge badge-primary">STUDIO SESSION BUILDER</div>
+      <h1>{{ isEditMode ? 'Edit Class Session' : 'Schedule New Class Session' }}</h1>
+      <p>Assign coach, room coordinates, workout window, and attendee capacity limits.</p>
+    </div>
+    <a routerLink="/admin/classes" class="btn btn-outline">← Back to Classes</a>
+  </div>
+
+  <div class="form-container glass-panel">
+    <div *ngIf="error" class="alert alert-error">
+      <span>{{ error }}</span>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="studio-form">
+      <div class="form-group">
+        <label for="name">Class Name / Title</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="formData.name"
+          name="name"
+          required
+          placeholder="e.g. Olympic Powerlifting Masterclass"
+          [disabled]="submitting"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="room">Studio Room / Arena</label>
+          <input
+            type="text"
+            id="room"
+            [(ngModel)]="formData.room"
+            name="room"
+            required
+            placeholder="Studio Alpha / Heavy Iron Zone"
+            [disabled]="submitting"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="dayOfWeek">Day of the Week</label>
+          <select
+            id="dayOfWeek"
+            [(ngModel)]="formData.dayOfWeek"
+            name="dayOfWeek"
+            required
+            [disabled]="submitting"
+          >
+            <option *ngFor="let d of daysOfWeek" [value]="d">{{ d }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row three-cols">
+        <div class="form-group">
+          <label for="startTime">Start Time (HH:MM)</label>
+          <input
+            type="text"
+            id="startTime"
+            [(ngModel)]="formData.startTime"
+            name="startTime"
+            required
+            placeholder="09:00"
+            [disabled]="submitting"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="endTime">End Time (HH:MM)</label>
+          <input
+            type="text"
+            id="endTime"
+            [(ngModel)]="formData.endTime"
+            name="endTime"
+            required
+            placeholder="10:00"
+            [disabled]="submitting"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="capacity">Roster Capacity Limit</label>
+          <input
+            type="number"
+            id="capacity"
+            [(ngModel)]="formData.capacity"
+            name="capacity"
+            required
+            min="1"
+            max="100"
+            [disabled]="submitting"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="submitting">
+          <span>{{ submitting ? 'Deploying...' : (isEditMode ? 'Update Class Session' : 'Publish Class Session') }}</span>
+        </button>
+        <a routerLink="/admin/classes" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

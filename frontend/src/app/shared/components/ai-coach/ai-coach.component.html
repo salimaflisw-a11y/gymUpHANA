@@ -1,0 +1,171 @@
+<!-- Floating AI Coach Launcher Button -->
+<div class="ai-coach-launcher" [class.active]="isOpen" (click)="toggleChat()" title="GymUp AI Fitness & Diet Coach">
+  <div class="launcher-glow"></div>
+  <div class="launcher-icon">
+    <svg *ngIf="!isOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/>
+      <path d="M18 9v2a6 6 0 0 1-12 0V9"/>
+      <path d="M12 17v4"/>
+      <path d="M8 21h8"/>
+      <circle cx="12" cy="7" r="1" fill="currentColor"/>
+    </svg>
+    <svg *ngIf="isOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </div>
+  <span class="online-pulse-dot" *ngIf="!isOpen"></span>
+</div>
+
+<!-- Floating Chat Drawer / Window -->
+<div class="ai-coach-drawer" *ngIf="isOpen">
+  <!-- Drawer Header -->
+  <div class="chat-header">
+    <div class="coach-profile">
+      <div class="coach-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+        <span class="avatar-live-indicator"></span>
+      </div>
+      <div class="coach-meta">
+        <div class="coach-name">
+          GymUp AI Coach
+          <span class="ai-badge">GEMINI</span>
+        </div>
+        <div class="coach-subtitle">
+          <span class="status-dot"></span> Diet, Nutrition & Training Advisor
+        </div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn" (click)="clearChat()" title="Clear Conversation" *ngIf="messages.length > 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        </svg>
+      </button>
+      <button class="action-btn close-btn" (click)="toggleChat()" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Chat Messages Container -->
+  <div class="chat-body" #messagesContainer>
+    <!-- Welcome View (when no messages exist yet) -->
+    <div class="welcome-screen" *ngIf="messages.length === 0">
+      <div class="welcome-badge">
+        <span>⚡ ELITE SPORTS NUTRITION & TRAINING</span>
+      </div>
+      <h3>Welcome to Your AI Coach!</h3>
+      <p class="welcome-desc">
+        Ask me anything about customized diet plans, daily protein & macros, workout routines, recovery, or hydration.
+      </p>
+
+      <div class="quick-prompts-wrapper">
+        <div class="category-block" *ngFor="let cat of categories">
+          <div class="category-title">
+            <span>{{ cat.icon }}</span> {{ cat.category }}
+          </div>
+          <div class="prompts-grid">
+            <button 
+              type="button" 
+              class="prompt-chip" 
+              *ngFor="let p of cat.prompts" 
+              (click)="sendMessage(p)">
+              {{ p }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Bubble Thread -->
+    <div class="messages-list" *ngIf="messages.length > 0">
+      <div 
+        class="message-row" 
+        *ngFor="let msg of messages" 
+        [class.user-row]="msg.sender === 'user'" 
+        [class.assistant-row]="msg.sender === 'assistant'">
+        
+        <div class="message-avatar" *ngIf="msg.sender === 'assistant'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+
+        <div class="message-bubble">
+          <div class="message-text" [innerHTML]="formatMessage(msg.text)"></div>
+          <div class="message-meta">
+            {{ msg.timestamp | date:'shortTime' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading / Typing Indicator -->
+      <div class="message-row assistant-row typing-row" *ngIf="isLoading">
+        <div class="message-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <div class="message-bubble typing-bubble">
+          <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="typing-text">Coach is thinking...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suggestion Pills Strip (visible when conversation is active) -->
+  <div class="quick-chips-strip" *ngIf="messages.length > 0 && !isLoading">
+    <button type="button" class="mini-chip" (click)="sendMessage('Generate a comprehensive 7-day high-protein meal plan with exact macros and grocery list.')">
+      🥗 7-Day Meal Plan
+    </button>
+    <button type="button" class="mini-chip" (click)="sendMessage('Build me an evidence-based 4-day Upper/Lower hypertrophy workout routine with sets, reps, and RPE.')">
+      🏋️ 4-Day Routine
+    </button>
+    <button type="button" class="mini-chip" (click)="sendMessage('What is my optimal neuromuscular recovery protocol after heavy squats and deadlifts?')">
+      ⚡ Recovery Protocol
+    </button>
+    <button type="button" class="mini-chip" (click)="sendMessage('How do I strategically break through a bench press plateaus to hit a new PR?')">
+      🎯 PR Strategy
+    </button>
+  </div>
+
+  <!-- Chat Input Footer -->
+  <div class="chat-footer">
+    <form class="input-form" (ngSubmit)="sendMessage()">
+      <input 
+        type="text" 
+        [(ngModel)]="userInput" 
+        name="userInput" 
+        placeholder="Ask about diet, meals, workouts, macros..."
+        [disabled]="isLoading"
+        autocomplete="off"
+      />
+      <button 
+        type="submit" 
+        class="send-btn" 
+        [disabled]="!userInput.trim() || isLoading"
+        title="Send Message">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </form>
+    <div class="chat-disclaimer">
+      GymUp AI provides sports science advice. Consult a physician for medical conditions.
+    </div>
+  </div>
+</div>
+

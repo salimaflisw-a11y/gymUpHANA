@@ -1,0 +1,59 @@
+<div class="my-bookings-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <div class="badge badge-primary">ATHLETE AGENDA</div>
+      <h1>My Studio Bookings</h1>
+      <p>Manage your upcoming workout session entries, check-in barcodes, and waitlist positions.</p>
+    </div>
+    <a routerLink="/member/classes" class="btn btn-primary">+ Reserve Another Session</a>
+  </div>
+
+  <div *ngIf="statusMessage" class="alert alert-success">
+    <span>{{ statusMessage }}</span>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="quantum-loader"></div>
+    <p>Loading your reservations...</p>
+  </div>
+
+  <div *ngIf="!loading && bookings.length === 0" class="empty-state glass-panel">
+    <div class="empty-icon">📅</div>
+    <h2>No Active Bookings</h2>
+    <p>You have no upcoming class reservations scheduled. Check out the master class schedule.</p>
+    <a routerLink="/member/classes" class="btn btn-primary">Browse Classes</a>
+  </div>
+
+  <div *ngIf="!loading && bookings.length > 0" class="bookings-grid">
+    <div *ngFor="let b of bookings" class="booking-card glass-panel">
+      <div class="card-head">
+        <span class="day-chip">{{ b.dayOfWeek }}</span>
+        <span class="badge" [ngClass]="b.status === 'CONFIRMED' ? 'badge-success' : 'badge-warning'">
+          {{ b.status === 'CONFIRMED' ? 'CONFIRMED ENTRY' : 'WAITLIST #' + (b.waitlistPosition || 1) }}
+        </span>
+      </div>
+
+      <div class="card-content">
+        <h3 class="class-title">{{ b.className }}</h3>
+        <p class="time-meta">⏰ {{ b.time }}</p>
+        <div class="detail-row">
+          <span>📍 {{ b.room }}</span>
+          <span>👤 Coach: {{ b.coachName }}</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button
+          (click)="cancel(b)"
+          class="btn-cancel"
+          [disabled]="cancellingId === b.id"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          <span>{{ cancellingId === b.id ? 'Cancelling...' : 'Cancel Reservation' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

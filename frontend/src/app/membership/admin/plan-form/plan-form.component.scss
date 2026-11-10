@@ -1,0 +1,56 @@
+.plan-form-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  .header-titles {
+    .badge {
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 6px 0;
+      color: #ffffff;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin: 0;
+    }
+  }
+}
+
+.form-container {
+  padding: 36px;
+  border-radius: var(--radius-xl);
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 14px;
+  }
+}
+

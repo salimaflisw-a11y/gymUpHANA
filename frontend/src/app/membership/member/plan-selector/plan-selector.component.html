@@ -1,0 +1,55 @@
+<div class="plans-page">
+  <div class="page-header">
+    <div class="badge badge-primary">MEMBERSHIP TIERS</div>
+    <h1>Select Your Training Tier</h1>
+    <p>Choose the optimal pass to fuel your athletic progression and consistency.</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="quantum-loader"></div>
+    <p>Loading available membership passes...</p>
+  </div>
+
+  <div *ngIf="!loading" class="plans-grid">
+    <div
+      *ngFor="let p of plans; let idx = index"
+      class="plan-card glass-panel"
+      [class.featured]="p.accessScope === 'BOTH'"
+    >
+      <div *ngIf="p.accessScope === 'BOTH'" class="featured-badge">
+        MOST POPULAR • ALL-INCLUSIVE
+      </div>
+
+      <div class="card-head">
+        <h3 class="plan-name">{{ p.name }}</h3>
+        <p class="plan-scope">{{ p.accessScope === 'BOTH' ? 'Gym Floor + Classes' : (p.accessScope === 'CLASSES' ? 'Classes Only' : 'Open Gym Only') }}</p>
+      </div>
+
+      <div class="price-block">
+        <span class="currency">$</span>
+        <span class="amount">{{ p.price.toFixed(0) }}</span>
+        <span class="cents">.{{ p.price.toFixed(2).split('.')[1] }}</span>
+        <span class="period">/ {{ p.durationDays }} Days</span>
+      </div>
+
+      <ul class="features-list">
+        <li *ngFor="let f of getFeatures(p.accessScope)">
+          <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>{{ f }}</span>
+        </li>
+      </ul>
+
+      <div class="card-action">
+        <button
+          (click)="selectPlan(p)"
+          class="btn btn-block"
+          [ngClass]="p.accessScope === 'BOTH' ? 'btn-primary' : 'btn-outline'"
+        >
+          Select {{ p.name }} →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

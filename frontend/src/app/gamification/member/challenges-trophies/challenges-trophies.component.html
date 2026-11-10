@@ -1,0 +1,212 @@
+<div class="gamification-page">
+  <!-- Notification Toast -->
+  <div *ngIf="actionMessage" class="toast-alert" [class.success]="actionMessage.type === 'success'" [class.error]="actionMessage.type === 'error'">
+    <span class="toast-icon">{{ actionMessage.type === 'success' ? '⚡' : '⚠️' }}</span>
+    <span class="toast-text">{{ actionMessage.text }}</span>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="badge-tag">
+        <span class="pulse-dot"></span>
+        <span>ATHLETE ARENA • COMMUNITY & ACHIEVEMENTS</span>
+      </div>
+      <h1>Challenges & Trophy Vault</h1>
+      <p class="subtitle">Complete community goals, unlock prestigious badges, and claim real gym perks.</p>
+    </div>
+
+    <!-- Quick Stats Pill -->
+    <div class="header-stats" *ngIf="profile">
+      <div class="stat-box">
+        <span class="stat-number">{{ profile.totalBadgesUnlocked }} / {{ profile.totalBadgesAvailable }}</span>
+        <span class="stat-label">Trophies Earned</span>
+      </div>
+      <div class="stat-box accent">
+        <span class="stat-number">{{ challenges.length }}</span>
+        <span class="stat-label">Active Missions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="tab-nav">
+    <button class="tab-btn" [class.active]="activeTab === 'challenges'" (click)="activeTab = 'challenges'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+      </svg>
+      <span>Community Challenges</span>
+      <span class="pill-count" *ngIf="challenges.length">{{ challenges.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'badges'" (click)="activeTab = 'badges'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+      </svg>
+      <span>Trophy Room & Perks</span>
+      <span class="pill-count" *ngIf="profile">{{ profile.totalBadgesUnlocked }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'leaderboard'" (click)="activeTab = 'leaderboard'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/>
+      </svg>
+      <span>Leaderboard</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loader-spinner"></div>
+    <p>Synchronizing athletic records...</p>
+  </div>
+
+  <!-- Content Sections -->
+  <div *ngIf="!loading">
+    <!-- TAB 1: COMMUNITY CHALLENGES -->
+    <div *ngIf="activeTab === 'challenges'" class="challenges-grid">
+      <div *ngFor="let c of challenges" class="challenge-card" [class.joined]="c.isJoined">
+        <div class="challenge-header">
+          <div class="challenge-status">
+            <span class="status-indicator" [class.active]="c.isJoined"></span>
+            <span class="status-text">{{ c.isJoined ? 'PARTICIPATING' : 'COMMUNITY OPEN' }}</span>
+          </div>
+          <span class="participant-badge">👥 {{ c.participantCount }} athletes</span>
+        </div>
+
+        <h3 class="challenge-title">{{ c.title }}</h3>
+        <p class="challenge-desc">{{ c.description }}</p>
+
+        <!-- Progress Bar -->
+        <div class="progress-section">
+          <div class="progress-meta">
+            <span class="metric-label">Goal: {{ c.metric }}</span>
+            <span class="metric-numbers">{{ c.currentProgress }} / {{ c.targetGoal }} ({{ c.progressPercentage }}%)</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="c.progressPercentage"></div>
+          </div>
+        </div>
+
+        <!-- Reward & Contribution Footer -->
+        <div class="challenge-footer">
+          <div class="reward-box">
+            <span class="reward-label">REWARD</span>
+            <span class="reward-val">🎁 {{ c.reward }}</span>
+          </div>
+
+          <div class="action-box">
+            <button *ngIf="!c.isJoined" 
+                    (click)="joinChallenge(c)" 
+                    [disabled]="joiningChallengeId === c.id"
+                    class="btn-join">
+              <span *ngIf="joiningChallengeId !== c.id">Join Challenge</span>
+              <span *ngIf="joiningChallengeId === c.id">Joining...</span>
+            </button>
+            <div *ngIf="c.isJoined" class="joined-badge">
+              <span>✓ Joined (Your contribution: {{ c.myContribution }})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="challenges.length === 0" class="empty-state">
+        <p>No active challenges at this moment. Check back soon for the next gym showdown!</p>
+      </div>
+    </div>
+
+    <!-- TAB 2: TROPHY ROOM & BADGES -->
+    <div *ngIf="activeTab === 'badges'" class="badges-section">
+      <div class="badges-grid" *ngIf="profile && profile.badges.length > 0">
+        <div *ngFor="let b of profile.badges" class="badge-card">
+          <div class="badge-icon-wrapper">
+            <span class="trophy-symbol">🏆</span>
+          </div>
+          <div class="badge-content">
+            <div class="badge-meta">
+              <span class="badge-category">{{ b.category }}</span>
+              <span class="badge-unlocked-date">Unlocked {{ b.unlockedAt | date:'mediumDate' }}</span>
+            </div>
+            <h4 class="badge-title">{{ b.name }}</h4>
+            <p class="badge-description">{{ b.description }}</p>
+
+            <!-- Perk Box -->
+            <div *ngIf="b.perkReward" class="perk-box">
+              <div class="perk-info">
+                <span class="perk-icon">🎁</span>
+                <div>
+                  <span class="perk-title">Available Reward</span>
+                  <p class="perk-desc">{{ b.perkReward }}</p>
+                </div>
+              </div>
+              <button *ngIf="!b.isPerkClaimed" 
+                      (click)="claimPerk(b)" 
+                      [disabled]="claimingBadgeId === b.memberBadgeId"
+                      class="btn-claim-perk">
+                <span *ngIf="claimingBadgeId !== b.memberBadgeId">Claim Perk</span>
+                <span *ngIf="claimingBadgeId === b.memberBadgeId">Claiming...</span>
+              </button>
+              <div *ngIf="b.isPerkClaimed" class="perk-claimed-tag">
+                <span>✓ Claimed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="profile && profile.badges.length === 0" class="empty-state">
+        <div class="empty-icon">🛡️</div>
+        <h3>No Trophies Unlocked Yet</h3>
+        <p>Keep training and checking in to unlock exclusive gym badges and rewards.</p>
+        <a routerLink="/member/checkin" class="btn-checkin">Check-in at Gym</a>
+      </div>
+    </div>
+
+    <!-- TAB 3: LEADERBOARD -->
+    <div *ngIf="activeTab === 'leaderboard'" class="leaderboard-section">
+      <div class="leaderboard-card">
+        <div class="leaderboard-header">
+          <h2>Consistency Masters • Streak Hall of Fame</h2>
+          <span class="refresh-badge">Live rankings</span>
+        </div>
+
+        <div class="table-container">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Athlete</th>
+                <th>Current Streak</th>
+                <th>Last Active</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of leaderboard" [class.podium-1]="user.rank === 1" [class.podium-2]="user.rank === 2" [class.podium-3]="user.rank === 3">
+                <td class="rank-cell">
+                  <span class="rank-badge" *ngIf="user.rank === 1">🥇 1</span>
+                  <span class="rank-badge" *ngIf="user.rank === 2">🥈 2</span>
+                  <span class="rank-badge" *ngIf="user.rank === 3">🥉 3</span>
+                  <span class="rank-badge default" *ngIf="user.rank > 3">#{{ user.rank }}</span>
+                </td>
+                <td class="athlete-cell">
+                  <div class="athlete-info">
+                    <span class="athlete-avatar">{{ user.name[0] }}</span>
+                    <span class="athlete-name">{{ user.name }}</span>
+                  </div>
+                </td>
+                <td class="streak-cell">
+                  <span class="streak-pill">🔥 {{ user.currentStreak }} Days</span>
+                </td>
+                <td class="date-cell">{{ user.lastActive || 'Today' }}</td>
+                <td class="status-cell">
+                  <span class="active-dot"></span>
+                  <span>Active Legend</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,91 @@
+<div class="subscription-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <div class="badge badge-primary">ATHLETE CREDENTIALS</div>
+      <h1>Active Membership & Pass</h1>
+      <p>View your club privileges, renewal timeline, and past invoices.</p>
+    </div>
+    <a routerLink="/member/plans" class="btn btn-outline">Explore Other Tiers</a>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="quantum-loader"></div>
+    <p>Retrieving your membership pass...</p>
+  </div>
+
+  <div *ngIf="!loading && statusData?.hasActiveSubscription" class="subscription-card glass-panel">
+    <div class="card-glow-banner"></div>
+    <div class="pass-header">
+      <div class="pass-brand">
+        <span class="digital-chip">CARD ID: #{{ statusData?.subscriptionId }}</span>
+        <h2 class="plan-title">{{ statusData?.plan?.name }}</h2>
+      </div>
+      <span class="status-pill active">
+        <span class="pulsing-beacon"></span>
+        ACTIVE PASS
+      </span>
+    </div>
+
+    <div class="pass-metrics">
+      <div class="metric-item">
+        <span class="label">VALID UNTIL</span>
+        <span class="value">{{ statusData?.endDate }}</span>
+      </div>
+      <div class="metric-item">
+        <span class="label">DAYS REMAINING</span>
+        <span class="value days-left">{{ statusData?.daysRemaining }} Days</span>
+      </div>
+      <div class="metric-item">
+        <span class="label">FACILITY ACCESS</span>
+        <span class="value">{{ statusData?.plan?.accessScope === 'BOTH' ? 'Open Gym + Studios' : statusData?.plan?.accessScope }}</span>
+      </div>
+    </div>
+
+    <div class="pass-actions">
+      <button (click)="renew()" class="btn btn-primary">
+        <span>Renew Membership</span>
+      </button>
+      <a routerLink="/member/checkin" class="btn btn-outline">
+        <span>Launch QR Scanner →</span>
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !statusData?.hasActiveSubscription" class="no-sub-card glass-panel">
+    <div class="empty-icon">🎟️</div>
+    <h2>No Active Membership Pass</h2>
+    <p>Unlock our functional training floor, studio classes, and coaching by choosing a plan.</p>
+    <a routerLink="/member/plans" class="btn btn-primary">Browse & Subscribe to Plans</a>
+  </div>
+
+  <!-- Subscription History Table -->
+  <div *ngIf="history.length > 0" class="history-card glass-panel">
+    <h3>Pass Transaction History</h3>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Plan</th>
+            <th>Billing Period</th>
+            <th>Price</th>
+            <th>Access Scope</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of history">
+            <td><strong>{{ item.planName }}</strong></td>
+            <td>{{ item.startDate }} → {{ item.endDate }}</td>
+            <td>${{ item.price ? item.price.toFixed(2) : '—' }}</td>
+            <td>{{ item.accessScope }}</td>
+            <td>
+              <span class="badge" [ngClass]="item.status === 'ACTIVE' ? 'badge-success' : 'badge-primary'">
+                {{ item.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+<div class="plan-form-page">
+  <div class="page-header">
+    <div class="header-titles">
+      <div class="badge badge-primary">TIER ARCHITECTURE</div>
+      <h1>{{ isEditMode ? 'Modify Plan Tier' : 'Deploy New Membership Tier' }}</h1>
+      <p>Configure pricing models, access boundaries, and membership quota ceilings.</p>
+    </div>
+    <a routerLink="/admin/plans" class="btn btn-outline">← Back to Plans</a>
+  </div>
+
+  <div class="form-container glass-panel">
+    <div *ngIf="error" class="alert alert-error">
+      <span>{{ error }}</span>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="plan-form">
+      <div class="form-group">
+        <label for="name">Tier Title / Designation</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="formData.name"
+          name="name"
+          required
+          placeholder="e.g. Pro Kinetic All-Access"
+          [disabled]="submitting"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="price">Price ($ USD)</label>
+          <input
+            type="number"
+            id="price"
+            [(ngModel)]="formData.price"
+            name="price"
+            required
+            step="0.01"
+            min="0"
+            [disabled]="submitting"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="durationDays">Validity (Days)</label>
+          <input
+            type="number"
+            id="durationDays"
+            [(ngModel)]="formData.durationDays"
+            name="durationDays"
+            required
+            min="1"
+            [disabled]="submitting"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="accessScope">Facility Scope Privileges</label>
+          <select
+            id="accessScope"
+            [(ngModel)]="formData.accessScope"
+            name="accessScope"
+            required
+            [disabled]="submitting"
+          >
+            <option *ngFor="let s of scopes" [value]="s.value">{{ s.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="maxMembers">Maximum Member Cap (Optional)</label>
+          <input
+            type="number"
+            id="maxMembers"
+            [(ngModel)]="formData.maxMembers"
+            name="maxMembers"
+            placeholder="Unlimited if empty"
+            min="1"
+            [disabled]="submitting"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="submitting">
+          <span>{{ submitting ? 'Deploying...' : (isEditMode ? 'Update Tier' : 'Publish Membership Tier') }}</span>
+        </button>
+        <a routerLink="/admin/plans" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,222 @@
+.coach-classes-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 30px;
+
+  .header-titles {
+    .badge {
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 6px 0;
+      color: #ffffff;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin: 0;
+    }
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+  color: var(--text-dim);
+
+  .quantum-loader {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(139, 92, 246, 0.15);
+    border-top-color: var(--neon-violet);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+.schedule-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.classes-column {
+  h3 {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  .session-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .session-card {
+    padding: 20px;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: all 0.25s ease;
+
+    .session-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+
+      .day-chip {
+        font-size: 0.725rem;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        background: rgba(139, 92, 246, 0.12);
+        color: var(--neon-violet);
+        padding: 3px 8px;
+        border-radius: var(--radius-xs);
+      }
+
+      .time-range {
+        font-size: 0.825rem;
+        color: var(--text-dim);
+      }
+    }
+
+    .session-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 14px 0;
+    }
+
+    .session-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.825rem;
+
+      .room-name {
+        color: var(--text-dim);
+      }
+
+      .enrolled-badge {
+        font-weight: 700;
+        color: var(--neon-cyan);
+      }
+    }
+
+    &:hover {
+      transform: translateX(4px);
+      border-color: var(--border-light);
+    }
+
+    &.selected {
+      background: rgba(23, 35, 62, 0.9);
+      border-color: var(--neon-violet);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+    }
+  }
+}
+
+.roster-column {
+  padding: 30px;
+
+  .roster-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 24px;
+    gap: 16px;
+
+    .section-tag {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--neon-violet);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 6px 0;
+    }
+
+    .time-room-meta {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      margin: 0;
+    }
+
+    .capacity-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      .stat-number {
+        font-size: 2.2rem;
+        font-weight: 900;
+        font-family: var(--font-heading);
+        color: var(--neon-violet);
+        line-height: 1;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+    }
+  }
+
+  .athlete-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .avatar-disc {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--grad-cyber);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.75rem;
+    }
+  }
+
+  .empty-roster {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+

@@ -1,0 +1,86 @@
+<div class="class-list-page">
+  <div class="page-header">
+    <div class="header-info">
+      <div class="badge badge-primary">STUDIO ORCHESTRATION</div>
+      <h1>Classes & Studio Schedules</h1>
+      <p>Manage trainer assignments, session capacities, and live attendee rosters.</p>
+    </div>
+    <button (click)="createClass()" class="btn btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      <span>Schedule New Class</span>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="quantum-loader"></div>
+    <p>Loading studio schedule...</p>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    <span>{{ successMessage }}</span>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="!loading && classes.length === 0" class="no-data-card glass-panel">
+    <div class="empty-icon">🧘‍♂️</div>
+    <h3>No Classes Scheduled</h3>
+    <p>Add workout sessions to start booking athletes into studios.</p>
+    <button (click)="createClass()" class="btn btn-primary">Schedule First Class</button>
+  </div>
+
+  <div *ngIf="!loading && classes.length > 0" class="classes-grid">
+    <div *ngFor="let c of classes" class="class-card glass-panel">
+      <div class="card-top">
+        <span class="day-chip">{{ c.dayOfWeek }}</span>
+        <span class="badge" [ngClass]="c.isFull ? 'badge-danger' : 'badge-success'">
+          {{ c.isFull ? 'FULL CAPACITY' : 'SPOTS AVAILABLE' }}
+        </span>
+      </div>
+
+      <div class="card-main">
+        <h3 class="class-name">{{ c.name }}</h3>
+        <div class="time-room-row">
+          <span class="time-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            {{ c.startTime }} - {{ c.endTime }}
+          </span>
+          <span class="room-tag">📍 {{ c.room }}</span>
+        </div>
+      </div>
+
+      <div class="coach-row">
+        <div class="coach-avatar">{{ (c.coachName || 'C')[0] }}</div>
+        <div class="coach-meta">
+          <span class="coach-label">MASTER COACH</span>
+          <span class="coach-name">{{ c.coachName }}</span>
+        </div>
+      </div>
+
+      <div class="occupancy-section">
+        <div class="occupancy-labels">
+          <span>Occupancy</span>
+          <span class="occupancy-ratio">{{ c.bookingCount || 0 }} / {{ c.capacity }} Booked</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="((c.bookingCount || 0) / c.capacity) * 100"></div>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button (click)="deleteClass(c.id)" class="btn-delete" title="Cancel/Remove Class">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+          </svg>
+          <span>Remove Session</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
