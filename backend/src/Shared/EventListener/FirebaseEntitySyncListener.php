@@ -136,7 +136,6 @@ class FirebaseEntitySyncListener
         $refClass = new \ReflectionClass($entity);
 
         foreach ($refClass->getProperties() as $property) {
-            $property->setAccessible(true);
             $name = $property->getName();
 
             // Skip passwords and internal Doctrine properties
