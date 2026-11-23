@@ -12,6 +12,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- --------------------------------------------------------------------
 -- Truncate existing tables to allow a clean, reproducible seed
 -- --------------------------------------------------------------------
+TRUNCATE TABLE `training_video`;
 TRUNCATE TABLE `form_review`;
 TRUNCATE TABLE `buddy_match`;
 TRUNCATE TABLE `buddy_profile`;
@@ -411,5 +412,30 @@ INSERT INTO `form_review` (`id`, `exercise_name`, `video_url`, `member_notes`, `
 (2, 'Barbell Back Squat', 'https://www.youtube.com/watch?v=bEv6CCg2BC8', 'Checking if my depth hits parallel and whether my knees are caving in during the concentric phase.', 'Great stance width! Your depth is solidly below parallel. Try pushing your knees out slightly more at the bottom transition to engage glute medius.', 5, 'COMPLETED', DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY), 9, 5),
 (3, 'Overhead Barbell Press', 'https://www.youtube.com/watch?v=2yjwXTZQDDI', 'Feeling slight pressure on lower back when pressing overhead. Not sure if I am hyper-extending.', 'Currently reviewing your clip with focus on core bracing and ribcage positioning.', NULL, 'IN_REVIEW', DATE_SUB(NOW(), INTERVAL 1 DAY), NULL, 11, 2),
 (4, 'Dumbbell Incline Bench Press', 'https://www.youtube.com/watch?v=8iPEnn-ltC8', 'Wondering if my elbow flare angle is around 45 degrees or too wide.', NULL, NULL, 'SUBMITTED', DATE_SUB(NOW(), INTERVAL 6 HOUR), NULL, 13, NULL);
+
+-- --------------------------------------------------------------------
+-- 22. Table: training_video
+-- All tutorials are YouTube links: the app only stores the URL and
+-- embeds the player client-side, so no video files are hosted.
+-- Categories: Technique, Strength, Mobility, Equipment, Core, Conditioning
+-- Difficulties: BEGINNER, INTERMEDIATE, ADVANCED, ALL_LEVELS
+-- --------------------------------------------------------------------
+INSERT INTO `training_video` (`id`, `title`, `description`, `category`, `target_muscle`, `difficulty`, `duration_minutes`, `video_url`, `thumbnail_url`, `instructor_name`, `views_count`, `created_at`) VALUES
+(1, 'Perfect Barbell Bench Press Form', 'Learn the setup, arch, scapular retraction, and bar path to maximize chest activation and protect your shoulders.', 'Technique', 'Chest & Triceps', 'BEGINNER', 12, 'https://www.youtube.com/watch?v=vcBig73ojpE', NULL, 'Jeff Nippard', 148, DATE_SUB(NOW(), INTERVAL 30 DAY)),
+(2, 'Barbell Back Squat: Perfect Your Technique', 'Fix the most common squat mistakes: stance width, bracing, depth, and knee tracking for strong, pain-free reps.', 'Technique', 'Quadriceps & Glutes', 'BEGINNER', 15, 'https://www.youtube.com/watch?v=bEv6CCg2BC8', NULL, 'Jeff Nippard', 96, DATE_SUB(NOW(), INTERVAL 28 DAY)),
+(3, 'Deadlift Mastery: Hip Hinge & Bracing', 'Break down the conventional deadlift setup, bar clearance, bracing, and lockout technique.', 'Strength', 'Hamstrings, Glutes & Back', 'INTERMEDIATE', 8, 'https://www.youtube.com/watch?v=op9kVnSso6Q', NULL, 'CrossFit', 132, DATE_SUB(NOW(), INTERVAL 26 DAY)),
+(4, 'Romanian Deadlift Form Guide', 'Master the hip hinge with the barbell RDL to load hamstrings and glutes while keeping your spine neutral.', 'Technique', 'Hamstrings & Glutes', 'INTERMEDIATE', 6, 'https://www.youtube.com/watch?v=JCXUYuzwNrM', NULL, 'Scott Herman', 61, DATE_SUB(NOW(), INTERVAL 24 DAY)),
+(5, 'Overhead Press: Standing Military Press', 'Set up a strong base, brace the core, and press overhead without hyperextending the lower back.', 'Strength', 'Shoulders & Triceps', 'INTERMEDIATE', 5, 'https://www.youtube.com/watch?v=2yjwXTZQDDI', NULL, 'Scott Herman', 77, DATE_SUB(NOW(), INTERVAL 22 DAY)),
+(6, 'Barbell Row Without Lower Back Pain', 'Stop making these rowing mistakes: torso angle, grip path, and scapular control for a bigger back.', 'Technique', 'Back & Biceps', 'INTERMEDIATE', 10, 'https://www.youtube.com/watch?v=kBWAon7ItDw', NULL, 'Jeremy Ethier', 88, DATE_SUB(NOW(), INTERVAL 20 DAY)),
+(7, 'The Perfect Pull-Up', 'Build your first strict pull-up or clean up your reps with proper shoulder position and scapular strength.', 'Technique', 'Back & Biceps', 'ADVANCED', 8, 'https://www.youtube.com/watch?v=eGo4IYlbE5g', NULL, 'Calisthenicmovement', 54, DATE_SUB(NOW(), INTERVAL 18 DAY)),
+(8, 'Lat Pulldown: 3 Golden Rules', 'Dial in the lat pulldown with three cues that improve your mind-muscle connection and range of motion.', 'Technique', 'Lats & Biceps', 'BEGINNER', 6, 'https://www.youtube.com/watch?v=CAwf7n6Luuc', NULL, 'Scott Herman', 39, DATE_SUB(NOW(), INTERVAL 16 DAY)),
+(9, 'Seated Leg Press Machine Setup', 'Set up the seated leg press safely: seat depth, foot placement, and knee tracking under load.', 'Equipment', 'Quadriceps & Glutes', 'BEGINNER', 5, 'https://www.youtube.com/watch?v=IZxyjW7MPJQ', NULL, 'Scott Herman', 45, DATE_SUB(NOW(), INTERVAL 14 DAY)),
+(10, 'Cable Crossovers Explained', 'How to properly adjust pulleys and execute smooth cable crossovers for a full chest contraction.', 'Equipment', 'Chest', 'BEGINNER', 3, 'https://www.youtube.com/watch?v=taI4XduLpTk', NULL, 'LIVESTRONG', 27, DATE_SUB(NOW(), INTERVAL 12 DAY)),
+(11, 'Dumbbell Side Lateral Raise', 'Target the lateral delts with strict form, controlled tempo, and the right elbow angle.', 'Technique', 'Shoulders', 'INTERMEDIATE', 4, 'https://www.youtube.com/watch?v=3VcKaXpzqRo', NULL, 'Scott Herman', 33, DATE_SUB(NOW(), INTERVAL 10 DAY)),
+(12, 'Dumbbell Biceps Curl', 'Classic dumbbell curl technique: elbow position, range of motion, and avoiding momentum.', 'Technique', 'Arms (Biceps)', 'BEGINNER', 3, 'https://www.youtube.com/watch?v=ykJmrZ5v0Oo', NULL, 'Howcast', 21, DATE_SUB(NOW(), INTERVAL 8 DAY)),
+(13, 'Face Pull: Rear Delt & Posture Fix', 'Strengthen rear delts and external rotators to improve posture and shoulder health.', 'Technique', 'Rear Delts & Traps', 'ALL_LEVELS', 4, 'https://www.youtube.com/watch?v=rep-qVOkqgk', NULL, 'Scott Herman', 66, DATE_SUB(NOW(), INTERVAL 6 DAY)),
+(14, 'Core Plank: Perfect Alignment', 'Hold a plank with neutral spine, active glutes, and correct shoulder positioning.', 'Core', 'Core & Abs', 'ALL_LEVELS', 3, 'https://www.youtube.com/watch?v=pSHjTRCQxIw', NULL, 'Scott Herman', 58, DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(15, 'Kettlebell Swing Fundamentals', 'Learn the hip-hinge powered kettlebell swing for explosive conditioning without lower back strain.', 'Conditioning', 'Full Body & Glutes', 'INTERMEDIATE', 4, 'https://www.youtube.com/watch?v=YSxHifyI6s8', NULL, 'Men''s Health', 42, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(16, 'Full Body Mobility & Hip Opener', 'A 15-minute full-body stretch routine to open the hips, relieve tension, and improve flexibility.', 'Mobility', 'Full Body & Hips', 'ALL_LEVELS', 15, 'https://www.youtube.com/watch?v=g_tea8ZNk5A', NULL, 'Mady Morrison', 71, DATE_SUB(NOW(), INTERVAL 1 DAY));
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -372,6 +372,25 @@ CREATE TABLE `form_review` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------------------
+-- Table: training_video
+-- --------------------------------------------------------------------
+CREATE TABLE `training_video` (
+  `id` INT AUTO_INCREMENT NOT NULL,
+  `title` VARCHAR(150) NOT NULL,
+  `description` TEXT DEFAULT NULL,
+  `category` VARCHAR(60) NOT NULL,
+  `target_muscle` VARCHAR(100) DEFAULT NULL,
+  `difficulty` VARCHAR(30) NOT NULL DEFAULT 'ALL_LEVELS',
+  `duration_minutes` INT NOT NULL DEFAULT 5,
+  `video_url` VARCHAR(500) NOT NULL,
+  `thumbnail_url` VARCHAR(500) DEFAULT NULL,
+  `instructor_name` VARCHAR(100) DEFAULT NULL,
+  `views_count` INT NOT NULL DEFAULT 0,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------------------
 -- Foreign Key Constraints
 -- --------------------------------------------------------------------
 ALTER TABLE `check_in` ADD CONSTRAINT `FK_90466CF97597D3FE` FOREIGN KEY (`member_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;

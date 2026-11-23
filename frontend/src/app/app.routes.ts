@@ -70,7 +70,8 @@ export const routes: Routes = [
       { path: 'streak', loadComponent: () => import('./attendance/member/my-streak/my-streak.component').then(m => m.MyStreakComponent) },
       { path: 'challenges', loadComponent: () => import('./gamification/member/challenges-trophies/challenges-trophies.component').then(m => m.ChallengesTrophiesComponent) },
       { path: 'equipment', loadComponent: () => import('./equipment/member/pr-vault/pr-vault.component').then(m => m.PrVaultComponent) },
-      { path: 'workout-planner', loadComponent: () => import('./attendance/member/workout-planner/workout-planner.component').then(m => m.WorkoutPlannerComponent) }
+      { path: 'workout-planner', loadComponent: () => import('./attendance/member/workout-planner/workout-planner.component').then(m => m.WorkoutPlannerComponent) },
+      { path: 'tutorials', loadComponent: () => import('./tutorials/member/tutorial-library/tutorial-library.component').then(m => m.TutorialLibraryComponent) }
     ]
   },
   {
