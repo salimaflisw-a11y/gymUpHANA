@@ -69,7 +69,8 @@ export const routes: Routes = [
       { path: 'schedule', loadComponent: () => import('./attendance/member/weekly-schedule/weekly-schedule.component').then(m => m.WeeklyScheduleComponent) },
       { path: 'streak', loadComponent: () => import('./attendance/member/my-streak/my-streak.component').then(m => m.MyStreakComponent) },
       { path: 'challenges', loadComponent: () => import('./gamification/member/challenges-trophies/challenges-trophies.component').then(m => m.ChallengesTrophiesComponent) },
-      { path: 'equipment', loadComponent: () => import('./equipment/member/pr-vault/pr-vault.component').then(m => m.PrVaultComponent) }
+      { path: 'equipment', loadComponent: () => import('./equipment/member/pr-vault/pr-vault.component').then(m => m.PrVaultComponent) },
+      { path: 'workout-planner', loadComponent: () => import('./attendance/member/workout-planner/workout-planner.component').then(m => m.WorkoutPlannerComponent) }
     ]
   },
   {

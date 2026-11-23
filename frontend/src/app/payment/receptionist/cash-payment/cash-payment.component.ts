@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaymentApiService } from '../../payment-api.service';
@@ -23,25 +23,16 @@ interface MemberLookup {
   templateUrl: './cash-payment.component.html',
   styleUrl: './cash-payment.component.scss',
 })
-export class CashPaymentComponent {
+export class CashPaymentComponent implements OnInit {
   private paymentService = inject(PaymentApiService);
 
   // Search member input
-  searchQuery = 'David';
-  selectedMember: MemberLookup | null = {
-    id: 14,
-    fullName: 'David Miller',
-    email: 'david.m@example.com',
-    phone: '+1 (555) 234-5678',
-    pendingSubscription: {
-      id: 88,
-      planName: 'Pro All-Access Monthly',
-      expectedPrice: 59.99,
-    },
-  };
+  searchQuery = '';
+  pendingList: any[] = [];
+  selectedMember: MemberLookup | null = null;
 
   // Cash payment fields
-  cashReceived: number = 60.0;
+  cashReceived: number = 0;
   receptionistNotes: string = '';
   isProcessing = false;
   errorMessage: string | null = null;
@@ -54,22 +45,50 @@ export class CashPaymentComponent {
     plan: string;
     amount: number;
     time: string;
-  }> = [
-    {
-      id: 204,
-      member: 'Sarah Connors',
-      plan: 'Starter Fitness Plan',
-      amount: 45.0,
-      time: '10:15 AM',
-    },
-    {
-      id: 203,
-      member: 'Lucas Graham',
-      plan: 'Coach 10-Pack Session',
-      amount: 199.0,
-      time: '09:40 AM',
-    },
-  ];
+  }> = [];
+
+  ngOnInit(): void {
+    this.loadPending();
+  }
+
+  loadPending(): void {
+    this.paymentService.getPendingSubscriptions().subscribe({
+      next: (list) => {
+        this.pendingList = list || [];
+        if (this.pendingList.length > 0 && !this.selectedMember) {
+          this.selectPending(this.pendingList[0]);
+        }
+      }
+    });
+  }
+
+  selectPending(item: any): void {
+    this.selectedMember = {
+      id: item.member.id,
+      fullName: item.member.fullName,
+      email: item.member.email,
+      phone: '',
+      pendingSubscription: {
+        id: item.id,
+        planName: item.plan.name,
+        expectedPrice: item.plan.price,
+      },
+    };
+    this.cashReceived = item.plan.price;
+    this.errorMessage = null;
+    this.paymentSuccess = null;
+  }
+
+  get filteredPending(): any[] {
+    if (!this.searchQuery) return this.pendingList;
+    const q = this.searchQuery.toLowerCase();
+    return this.pendingList.filter(
+      item =>
+        item.member.fullName.toLowerCase().includes(q) ||
+        item.member.email.toLowerCase().includes(q) ||
+        String(item.id).includes(q)
+    );
+  }
 
   get expectedAmount(): number {
     return this.selectedMember?.pendingSubscription?.expectedPrice ?? 0;
@@ -116,6 +135,7 @@ export class CashPaymentComponent {
             amount: res.payment.amount,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           });
+          this.loadPending();
         },
         error: (err) => {
           this.isProcessing = false;
@@ -129,35 +149,6 @@ export class CashPaymentComponent {
     this.paymentSuccess = null;
     this.cashReceived = 0;
     this.selectedMember = null;
-  }
-
-  quickSelectPreset(memberId: number): void {
-    if (memberId === 14) {
-      this.selectedMember = {
-        id: 14,
-        fullName: 'David Miller',
-        email: 'david.m@example.com',
-        phone: '+1 (555) 234-5678',
-        pendingSubscription: {
-          id: 88,
-          planName: 'Pro All-Access Monthly',
-          expectedPrice: 59.99,
-        },
-      };
-      this.cashReceived = 60.0;
-    } else {
-      this.selectedMember = {
-        id: 22,
-        fullName: 'Elena Rostova',
-        email: 'elena.r@example.com',
-        phone: '+1 (555) 876-5432',
-        pendingSubscription: {
-          id: 89,
-          planName: 'Annual VIP All-Inclusive',
-          expectedPrice: 499.0,
-        },
-      };
-      this.cashReceived = 500.0;
-    }
+    this.loadPending();
   }
 }

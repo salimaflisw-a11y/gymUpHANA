@@ -11,3 +11,7 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+# Local test tooling
+/phpunit.phar
+/.phpunit.result.cache

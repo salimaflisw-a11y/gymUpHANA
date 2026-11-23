@@ -18,6 +18,9 @@ configfirebasefirebase_credentials.json
 /GymUp-backend/
 /GymUp_front-main/
 
+# Local artifacts
+/cookie.txt
+
 # OS files
 .DS_Store
 Thumbs.db

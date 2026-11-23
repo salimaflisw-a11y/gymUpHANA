@@ -54,6 +54,45 @@ class ClassController extends AbstractController
         return $this->json($data);
     }
 
+    #[Route('/coaches', name: 'coaches', methods: ['GET'])]
+    public function coaches(): JsonResponse
+    {
+        $coaches = $this->userRepository->findBy(['role' => UserRole::COACH]);
+
+        $data = array_map(function ($c) {
+            return [
+                'id' => $c->getId(),
+                'fullName' => $c->getFullName() ?? $c->getEmail(),
+                'email' => $c->getEmail(),
+            ];
+        }, $coaches);
+
+        return $this->json($data);
+    }
+
+    #[Route('/{id}', name: 'show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function show(int $id): JsonResponse
+    {
+        $session = $this->classSessionRepository->find($id);
+        if (!$session) {
+            return $this->json(['error' => 'Class session not found.'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json([
+            'id' => $session->getId(),
+            'name' => $session->getName(),
+            'coachId' => $session->getCoach()->getId(),
+            'coachName' => $session->getCoach()->getFullName() ?? $session->getCoach()->getEmail(),
+            'room' => $session->getRoom(),
+            'dayOfWeek' => $session->getDayOfWeek(),
+            'startTime' => $session->getStartTime()->format('H:i'),
+            'endTime' => $session->getEndTime()->format('H:i'),
+            'capacity' => $session->getCapacity(),
+            'confirmedCount' => $session->getConfirmedBookingsCount(),
+            'isFull' => $session->isFull(),
+        ]);
+    }
+
     #[Route('', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {

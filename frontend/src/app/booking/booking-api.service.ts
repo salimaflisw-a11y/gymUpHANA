@@ -71,6 +71,25 @@ export class BookingApiService {
     );
   }
 
+  getCoaches(): Observable<{ id: number; fullName: string; email: string }[]> {
+    return this.http.get<{ id: number; fullName: string; email: string }[]>(`${this.baseUrl}/admin/classes/coaches`).pipe(
+      catchError(() => of([]))
+    );
+  }
+
+  getClass(id: number): Observable<ClassSession> {
+    return this.http.get<any>(`${this.baseUrl}/admin/classes/${id}`).pipe(
+      map((c: any) => ({
+        ...c,
+        coachId: c.coachId ?? c.coach?.id,
+        coachName: c.coachName ?? c.coach?.fullName,
+        bookingCount: c.confirmedCount ?? c.bookingCount ?? 0,
+        confirmedCount: c.confirmedCount ?? c.bookingCount ?? 0,
+        waitlistCount: c.waitlistCount ?? 0,
+      }))
+    );
+  }
+
   createClass(data: CreateClassRequest): Observable<ClassSession> {
     return this.http.post<ClassSession>(`${this.baseUrl}/admin/classes`, data);
   }

@@ -97,7 +97,7 @@
 
   .subtitle {
     font-size: 0.95rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin: 0;
   }
 
@@ -127,7 +127,7 @@
 
       .stat-label {
         font-size: 0.75rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -161,7 +161,7 @@
     background: transparent;
     border: none;
     border-radius: 10px;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
@@ -205,7 +205,7 @@
   align-items: center;
   justify-content: center;
   padding: 5rem 2rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 
   .loader-spinner {
     width: 40px;
@@ -293,14 +293,14 @@
         .status-text {
           font-size: 0.75rem;
           font-weight: 700;
-          color: #94a3b8;
+          color: var(--text-muted);
           letter-spacing: 0.05em;
         }
       }
 
       .participant-badge {
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 500;
       }
     }
@@ -314,7 +314,7 @@
 
     .challenge-desc {
       font-size: 0.875rem;
-      color: #94a3b8;
+      color: var(--text-muted);
       line-height: 1.5;
       margin: 0 0 1.5rem 0;
     }
@@ -329,7 +329,7 @@
         margin-bottom: 0.5rem;
 
         .metric-label {
-          color: #64748b;
+          color: var(--text-muted);
         }
 
         .metric-numbers {
@@ -365,7 +365,7 @@
         .reward-label {
           display: block;
           font-size: 0.65rem;
-          color: #64748b;
+          color: var(--text-muted);
           font-weight: 700;
           letter-spacing: 0.08em;
         }
@@ -464,7 +464,7 @@
 
         .badge-unlocked-date {
           font-size: 0.75rem;
-          color: #64748b;
+          color: var(--text-muted);
         }
       }
 
@@ -477,7 +477,7 @@
 
       .badge-description {
         font-size: 0.85rem;
-        color: #94a3b8;
+        color: var(--text-muted);
         line-height: 1.45;
         margin: 0 0 1rem 0;
       }
@@ -591,7 +591,7 @@
         th {
           font-size: 0.75rem;
           font-weight: 700;
-          color: #64748b;
+          color: var(--text-muted);
           text-transform: uppercase;
           letter-spacing: 0.08em;
           padding: 0.75rem 1.25rem;
@@ -635,7 +635,7 @@
               font-weight: 800;
 
               &.default {
-                color: #64748b;
+                color: var(--text-muted);
                 font-weight: 600;
               }
             }
@@ -682,7 +682,7 @@
           }
 
           .date-cell {
-            color: #94a3b8;
+            color: var(--text-muted);
             font-size: 0.85rem;
           }
 
@@ -730,7 +730,7 @@
 
   p {
     font-size: 0.9rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     max-width: 480px;
     margin: 0 auto 1.5rem auto;
   }

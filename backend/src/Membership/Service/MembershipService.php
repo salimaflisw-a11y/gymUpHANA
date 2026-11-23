@@ -82,6 +82,9 @@ class MembershipService
         $subscription = new Subscription();
         $subscription->setMember($member);
         $subscription->setPlan($plan);
+        $startDate = new \DateTimeImmutable('today');
+        $subscription->setStartDate($startDate);
+        $subscription->setEndDate($startDate->modify('+' . $plan->getDurationDays() . ' days'));
         $subscription->setStatus(SubscriptionStatus::PENDING);
 
         $this->subscriptionRepository->save($subscription);
@@ -175,6 +178,9 @@ class MembershipService
         $subscription = new Subscription();
         $subscription->setMember($member);
         $subscription->setPlan($plan);
+        $startDate = new \DateTimeImmutable('today');
+        $subscription->setStartDate($startDate);
+        $subscription->setEndDate($startDate->modify('+' . $plan->getDurationDays() . ' days'));
         $subscription->setStatus(SubscriptionStatus::PENDING);
 
         $this->subscriptionRepository->save($subscription);

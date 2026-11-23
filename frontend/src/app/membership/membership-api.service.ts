@@ -60,6 +60,10 @@ export class MembershipApiService {
     );
   }
 
+  getPlan(id: number): Observable<Plan> {
+    return this.http.get<Plan>(`${this.baseUrl}/admin/plans/${id}`);
+  }
+
   createPlan(data: CreatePlanRequest): Observable<Plan> {
     return this.http.post<Plan>(`${this.baseUrl}/admin/plans`, data);
   }
@@ -145,7 +149,7 @@ export class MembershipApiService {
           ...s,
           planId: s.plan?.id ?? s.planId,
           planName: s.plan?.name ?? s.planName,
-          price: s.plan?.price ?? s.price,
+          price: Number(s.plan?.price ?? s.price) || 0,
           accessScope: s.plan?.accessScope ?? s.accessScope,
         }));
       }),

@@ -404,6 +404,17 @@ $text-muted: #8b9bb4;
           color: #d1d9e6;
         }
       }
+
+      .chat-ol {
+        margin: 6px 0 6px 18px;
+        padding: 0;
+
+        .chat-num-li {
+          margin-bottom: 4px;
+          list-style-type: decimal;
+          color: #d1d9e6;
+        }
+      }
     }
 
     .message-meta {

@@ -1,0 +1,214 @@
+<div class="planner-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="badge badge-primary">AI STRENGTH LAB</div>
+    <h1>AI Workout Planner &amp; Live Training</h1>
+    <p>Generate hyper-personalized training routines mapped to GymUp's equipment, complete with rest timers and live PR logging.</p>
+  </div>
+
+  <!-- Generator Setup Card (when not in live session) -->
+  <div *ngIf="!isLiveMode" class="setup-grid">
+    <div class="glass-panel config-panel">
+      <h2>Configure Your Session</h2>
+      
+      <div class="form-group">
+        <label>Primary Training Goal</label>
+        <div class="chip-group">
+          <button
+            *ngFor="let g of goalOptions"
+            type="button"
+            class="chip-btn"
+            [class.active]="selectedGoal === g"
+            (click)="selectedGoal = g"
+          >
+            {{ g }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Target Muscle Focus</label>
+        <div class="chip-group">
+          <button
+            *ngFor="let m of muscleOptions"
+            type="button"
+            class="chip-btn"
+            [class.active]="selectedMuscle === m"
+            (click)="selectedMuscle = m"
+          >
+            {{ m }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col">
+          <label>Target Duration: {{ durationMinutes }} Minutes</label>
+          <input
+            type="range"
+            min="20"
+            max="90"
+            step="5"
+            [(ngModel)]="durationMinutes"
+            class="range-slider"
+          />
+        </div>
+        <div class="form-group col">
+          <label>Athlete Experience Level</label>
+          <select [(ngModel)]="fitnessLevel" class="custom-select">
+            <option *ngFor="let l of levelOptions" [value]="l">{{ l }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner">
+        {{ errorMessage }}
+      </div>
+
+      <button
+        class="btn btn-primary btn-generate"
+        [disabled]="isGenerating"
+        (click)="generateRoutine()"
+      >
+        <span *ngIf="!isGenerating">⚡ Generate AI Routine with GymUp Machines</span>
+        <span *ngIf="isGenerating">🧠 Gemini AI Engineering Workout...</span>
+      </button>
+    </div>
+
+    <!-- Generated Plan Preview -->
+    <div *ngIf="plan" class="glass-panel plan-preview">
+      <div class="plan-header">
+        <div>
+          <span class="difficulty-tag">{{ plan.difficulty }} • {{ plan.estimatedDurationMinutes }} MINS</span>
+          <h2 class="plan-title">{{ plan.title }}</h2>
+          <p class="coach-quote">💡 "{{ plan.coachAdvice }}"</p>
+        </div>
+        <button (click)="startLiveSession()" class="btn btn-cyber pulse-btn">
+          ▶ Start Live Session
+        </button>
+      </div>
+
+      <!-- Warmup -->
+      <div class="phase-section">
+        <h3>🔥 Dynamic Warm-up</h3>
+        <div class="phase-items">
+          <div *ngFor="let w of plan.warmup" class="phase-card">
+            <span class="phase-name">{{ w.name }} ({{ w.duration }})</span>
+            <span class="phase-notes">{{ w.notes }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercises List -->
+      <div class="phase-section">
+        <h3>💪 Working Exercises ({{ plan.exercises.length }} Movements)</h3>
+        <div class="exercises-list">
+          <div *ngFor="let ex of plan.exercises; let idx = index" class="exercise-item">
+            <div class="ex-num">{{ idx + 1 }}</div>
+            <div class="ex-details">
+              <h4>{{ ex.name }}</h4>
+              <p class="ex-machine">
+                <span class="badge-machine">📍 {{ ex.equipmentName }}</span>
+                <span class="target-sub">• {{ ex.targetMuscle }}</span>
+              </p>
+              <p class="ex-tip">Tip: {{ ex.coachingTip }}</p>
+            </div>
+            <div class="ex-stats">
+              <span class="stat-badge">{{ ex.sets }} Sets × {{ ex.reps }}</span>
+              <span class="stat-rest">⏱ {{ ex.restSeconds }}s rest</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE WORKOUT MODE -->
+  <div *ngIf="isLiveMode && currentExercise" class="live-workout-container">
+    <div class="live-header glass-panel">
+      <div>
+        <span class="live-badge">● LIVE TRAINING MODE</span>
+        <h2>{{ plan?.title }}</h2>
+      </div>
+      <div class="timer-display">
+        <span class="timer-label">SESSION TIME</span>
+        <span class="timer-digits">{{ formatTimer(activeTimer) }}</span>
+      </div>
+      <button (click)="finishWorkout()" class="btn btn-outline-danger">
+        End Session
+      </button>
+    </div>
+
+    <!-- Rest Overlay if resting -->
+    <div *ngIf="isResting" class="rest-card glass-panel">
+      <div class="rest-timer">
+        <h3>Rest Interval</h3>
+        <div class="countdown-circle">{{ restTimeRemaining }}s</div>
+        <p>Breathe deeply, hydrate, and prepare for your next set.</p>
+        <button (click)="skipRest()" class="btn btn-outline">Skip Rest Interval →</button>
+      </div>
+    </div>
+
+    <!-- Active Movement Card -->
+    <div *ngIf="!isResting" class="active-movement-card glass-panel">
+      <div class="movement-head">
+        <div>
+          <span class="step-indicator">MOVEMENT {{ currentExerciseIndex + 1 }} OF {{ plan?.exercises?.length }}</span>
+          <h1 class="exercise-name">{{ currentExercise.name }}</h1>
+          <p class="equipment-indicator">
+            Using machine: <strong>{{ currentExercise.equipmentName }}</strong>
+          </p>
+        </div>
+        <div class="target-target-rpe">
+          <span class="rpe-tag">Target RPE: {{ currentExercise.rpe || '8/10' }}</span>
+        </div>
+      </div>
+
+      <div class="movement-specs">
+        <div class="spec-box">
+          <span class="spec-lbl">TARGET SETS</span>
+          <span class="spec-val">{{ currentExercise.sets }}</span>
+        </div>
+        <div class="spec-box">
+          <span class="spec-lbl">REPS PER SET</span>
+          <span class="spec-val">{{ currentExercise.reps }}</span>
+        </div>
+        <div class="spec-box">
+          <span class="spec-lbl">REST TIME</span>
+          <span class="spec-val">{{ currentExercise.restSeconds }}s</span>
+        </div>
+      </div>
+
+      <div class="pro-tip-box">
+        <strong>Head Coach Cue:</strong> {{ currentExercise.coachingTip }}
+      </div>
+
+      <!-- Instant PR Logger -->
+      <div class="pr-log-box">
+        <h3>⚡ Log Set Directly to Your PR Vault</h3>
+        <div class="pr-inputs">
+          <div class="input-grp">
+            <label>Weight Lifted (kg)</label>
+            <input type="number" [(ngModel)]="logWeightKg" min="1" max="500" class="num-input" />
+          </div>
+          <div class="input-grp">
+            <label>Reps Completed</label>
+            <input type="number" [(ngModel)]="logReps" min="1" max="100" class="num-input" />
+          </div>
+          <button (click)="logSetToPRVault()" class="btn btn-cyber">
+            ✓ Log Set
+          </button>
+        </div>
+        <div *ngIf="logSuccessMessage" class="log-alert">
+          {{ logSuccessMessage }}
+        </div>
+      </div>
+
+      <div class="movement-footer">
+        <button (click)="nextExercise()" class="btn btn-primary btn-next-ex">
+          {{ currentExerciseIndex < (plan?.exercises?.length || 0) - 1 ? 'Complete Exercise & Next Movement →' : 'Finish Workout Session 🎉' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

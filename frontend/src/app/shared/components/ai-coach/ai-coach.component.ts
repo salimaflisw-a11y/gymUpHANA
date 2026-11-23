@@ -154,27 +154,65 @@ export class AiCoachComponent implements OnInit {
   formatMessage(text: string): string {
     if (!text) return '';
 
-    let formatted = text
-      // Escape HTML entities to prevent XSS
+    // Escape HTML entities to prevent XSS
+    const escaped = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       // Bold **text**
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      // Bullet points - or *
-      .replace(/^[\*\-]\s+(.*)$/gm, '<li class="chat-li">$1</li>')
-      // Numbered lists 1. 2.
-      .replace(/^\d+\.\s+(.*)$/gm, '<li class="chat-num-li">$1</li>')
-      // Paragraph line breaks
-      .replace(/\n\n/g, '<br><br>')
-      .replace(/\n/g, '<br>');
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    // Wrap list items
-    if (formatted.includes('<li class="chat-li">')) {
-      formatted = formatted.replace(/(<li class="chat-li">.*?<\/li>)/gs, '<ul class="chat-ul">$1</ul>');
+    const lines = escaped.split('\n');
+    const result: string[] = [];
+    let inUl = false;
+    let inOl = false;
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      const bulletMatch = trimmed.match(/^[\*\-]\s+(.*)$/);
+      const numberMatch = trimmed.match(/^(\d+)\.\s+(.*)$/);
+
+      if (bulletMatch) {
+        if (inOl) {
+          result.push('</ol>');
+          inOl = false;
+        }
+        if (!inUl) {
+          result.push('<ul class="chat-ul">');
+          inUl = true;
+        }
+        result.push(`<li class="chat-li">${bulletMatch[1]}</li>`);
+      } else if (numberMatch) {
+        if (inUl) {
+          result.push('</ul>');
+          inUl = false;
+        }
+        if (!inOl) {
+          result.push('<ol class="chat-ol">');
+          inOl = true;
+        }
+        result.push(`<li class="chat-num-li">${numberMatch[2]}</li>`);
+      } else {
+        if (inUl) {
+          result.push('</ul>');
+          inUl = false;
+        }
+        if (inOl) {
+          result.push('</ol>');
+          inOl = false;
+        }
+        if (trimmed === '') {
+          result.push('<br>');
+        } else {
+          result.push(`<span>${trimmed}</span><br>`);
+        }
+      }
     }
 
-    return formatted;
+    if (inUl) result.push('</ul>');
+    if (inOl) result.push('</ol>');
+
+    return result.join('');
   }
 
   private scrollToBottom(): void {

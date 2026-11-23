@@ -6,6 +6,7 @@ use App\Auth\Entity\User;
 use App\Auth\Repository\UserRepository;
 use App\Membership\Repository\SubscriptionRepository;
 use App\Payment\Service\PaymentService;
+use App\Shared\Enum\SubscriptionStatus;
 use InvalidArgumentException;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +26,30 @@ class CashPaymentController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly SubscriptionRepository $subscriptionRepository
     ) {
+    }
+
+    #[Route('/pending', name: 'pending', methods: ['GET'])]
+    public function getPendingSubscriptions(): JsonResponse
+    {
+        $subscriptions = $this->subscriptionRepository->findBy(['status' => SubscriptionStatus::PENDING]);
+
+        $data = array_map(function ($s) {
+            return [
+                'id' => $s->getId(),
+                'member' => [
+                    'id' => $s->getMember()->getId(),
+                    'fullName' => $s->getMember()->getFullName() ?? $s->getMember()->getEmail(),
+                    'email' => $s->getMember()->getEmail(),
+                ],
+                'plan' => [
+                    'id' => $s->getPlan()->getId(),
+                    'name' => $s->getPlan()->getName(),
+                    'price' => (float)$s->getPlan()->getPrice(),
+                ]
+            ];
+        }, $subscriptions);
+
+        return $this->json($data);
     }
 
     #[Route('/cash', name: 'record_cash', methods: ['POST'])]

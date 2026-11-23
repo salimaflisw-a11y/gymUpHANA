@@ -46,7 +46,7 @@
 
   .subtitle {
     font-size: 0.95rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin: 0;
   }
 
@@ -208,7 +208,7 @@
 
       .card-sub {
         font-size: 0.85rem;
-        color: #94a3b8;
+        color: var(--text-muted);
         margin: 0;
       }
     }
@@ -272,7 +272,7 @@
     .matrix-title {
       font-size: 0.8rem;
       font-weight: 700;
-      color: #64748b;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       margin: 0 0 0.85rem 0;
@@ -398,7 +398,7 @@
     .stat-details {
       .stat-label {
         font-size: 0.75rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -413,7 +413,7 @@
 
       .stat-sub {
         font-size: 0.75rem;
-        color: #94a3b8;
+        color: var(--text-muted);
       }
     }
   }
@@ -441,7 +441,7 @@
 
     .timeline-count {
       font-size: 0.8rem;
-      color: #64748b;
+      color: var(--text-muted);
     }
   }
 
@@ -456,7 +456,7 @@
       th {
         font-size: 0.75rem;
         font-weight: 700;
-        color: #64748b;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.08em;
         padding: 0.75rem 1.25rem;
@@ -488,7 +488,7 @@
         }
 
         .visit-index {
-          color: #64748b;
+          color: var(--text-muted);
           font-weight: 700;
         }
 
@@ -506,7 +506,7 @@
         .no-history {
           text-align: center;
           padding: 2rem;
-          color: #64748b;
+          color: var(--text-muted);
         }
       }
     }

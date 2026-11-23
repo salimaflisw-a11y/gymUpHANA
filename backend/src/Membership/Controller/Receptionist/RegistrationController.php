@@ -31,7 +31,7 @@ class RegistrationController extends AbstractController
             return [
                 'id' => $p->getId(),
                 'name' => $p->getName(),
-                'price' => $p->getPrice(),
+                'price' => (float) $p->getPrice(),
                 'durationDays' => $p->getDurationDays(),
                 'accessScope' => $p->getAccessScope()->value,
                 'maxMembers' => $p->getMaxMembers(),

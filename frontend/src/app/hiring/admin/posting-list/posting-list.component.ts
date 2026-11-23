@@ -74,7 +74,7 @@ export class PostingListComponent implements OnInit {
   }
 
   goToApplications(posting: JobPosting): void {
-    this.router.navigate(['/hiring/admin/applications'], {
+    this.router.navigate(['/admin/applications'], {
       queryParams: { postingId: posting.id },
     });
   }

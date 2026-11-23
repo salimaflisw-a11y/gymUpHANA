@@ -28,14 +28,20 @@
           <button type="button" class="btn-search">Search</button>
         </div>
 
-        <div class="quick-tags">
-          <span>Recent Walk-ins:</span>
-          <button type="button" class="tag-btn" (click)="quickSelectPreset(14)">
-            David Miller (#14)
+        <div class="quick-tags" *ngIf="filteredPending.length > 0">
+          <span>Pending Walk-ins / Members:</span>
+          <button
+            *ngFor="let item of filteredPending"
+            type="button"
+            class="tag-btn"
+            [class.active]="selectedMember?.id === item.member.id"
+            (click)="selectPending(item)"
+          >
+            {{ item.member.fullName }} (#{{ item.id }} - {{ item.plan.name }})
           </button>
-          <button type="button" class="tag-btn" (click)="quickSelectPreset(22)">
-            Elena Rostova (#22)
-          </button>
+        </div>
+        <div class="quick-tags" *ngIf="pendingList.length === 0">
+          <span>No pending memberships waiting for cash intake.</span>
         </div>
       </div>
 

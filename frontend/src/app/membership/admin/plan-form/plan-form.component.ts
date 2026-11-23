@@ -43,10 +43,18 @@ export class PlanFormComponent implements OnInit {
     if (idParam) {
       this.isEditMode = true;
       this.planId = Number(idParam);
-      this.formData.name = 'Premium Gold Pass';
-      this.formData.price = 79.99;
-      this.formData.durationDays = 30;
-      this.formData.accessScope = 'BOTH';
+      this.membershipApi.getPlan(this.planId).subscribe({
+        next: (p) => {
+          this.formData.name = p.name;
+          this.formData.price = Number(p.price);
+          this.formData.durationDays = p.durationDays;
+          this.formData.accessScope = p.accessScope;
+          this.formData.maxMembers = p.maxMembers ?? undefined;
+        },
+        error: () => {
+          this.error = 'Failed to load membership plan details.';
+        }
+      });
     }
   }
 

@@ -34,7 +34,7 @@ class PlanController extends AbstractController
             return [
                 'id' => $p->getId(),
                 'name' => $p->getName(),
-                'price' => $p->getPrice(),
+                'price' => (float) $p->getPrice(),
                 'durationDays' => $p->getDurationDays(),
                 'accessScope' => $p->getAccessScope()->value,
                 'maxMembers' => $p->getMaxMembers(),
@@ -43,6 +43,25 @@ class PlanController extends AbstractController
         }, $plans);
 
         return $this->json($data);
+    }
+
+    #[Route('/{id}', name: 'show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function show(int $id): JsonResponse
+    {
+        $plan = $this->planRepository->find($id);
+        if (!$plan) {
+            return $this->json(['error' => 'Plan not found.'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json([
+            'id' => $plan->getId(),
+            'name' => $plan->getName(),
+            'price' => (float)$plan->getPrice(),
+            'durationDays' => $plan->getDurationDays(),
+            'accessScope' => $plan->getAccessScope()->value,
+            'maxMembers' => $plan->getMaxMembers(),
+            'isActive' => $plan->isActive(),
+        ]);
     }
 
     #[Route('', name: 'create', methods: ['POST'])]

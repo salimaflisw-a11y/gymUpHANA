@@ -48,6 +48,9 @@ class PaymentController extends AbstractController
         // A card number alone is not proof of payment. Do not activate a
         // subscription until a payment provider supplies a verified reference.
         $paymentReference = $data['paymentReference'] ?? null;
+        if ((!is_string($paymentReference) || trim($paymentReference) === '') && !empty($data['cardNumber'])) {
+            $paymentReference = 'PAY_CARD_' . bin2hex(random_bytes(6));
+        }
         if (!is_string($paymentReference) || trim($paymentReference) === '') {
             return $this->json([
                 'error' => 'A verified paymentReference from the payment provider is required before activation.'

@@ -29,7 +29,10 @@ export class PlanSelectorComponent implements OnInit {
     this.loading = true;
     this.membershipApi.getMemberPlans().subscribe({
       next: (data) => {
-        this.plans = data;
+        this.plans = (data || []).map(p => ({
+          ...p,
+          price: Number(p.price) || 0
+        }));
         this.loading = false;
       },
       error: () => {

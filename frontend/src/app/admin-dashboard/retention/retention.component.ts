@@ -26,10 +26,11 @@ export class RetentionComponent implements OnInit {
     this.loading = true;
     this.retentionApi.getAtRiskMembers().subscribe({
       next: (members) => {
-        this.atRiskMembers = members;
+        this.atRiskMembers = Array.isArray(members) ? members : [];
         this.loading = false;
       },
       error: () => {
+        this.atRiskMembers = [];
         this.loading = false;
       }
     });
@@ -50,11 +51,11 @@ export class RetentionComponent implements OnInit {
   }
 
   get criticalCount(): number {
-    return this.atRiskMembers.filter(m => m.riskLevel === 'CRITICAL_CHURN').length;
+    return Array.isArray(this.atRiskMembers) ? this.atRiskMembers.filter(m => m.riskLevel === 'CRITICAL_CHURN').length : 0;
   }
 
   get highRiskCount(): number {
-    return this.atRiskMembers.filter(m => m.riskLevel === 'HIGH_RISK').length;
+    return Array.isArray(this.atRiskMembers) ? this.atRiskMembers.filter(m => m.riskLevel === 'HIGH_RISK').length : 0;
   }
 
   private showToast(text: string, type: 'success' | 'error'): void {

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import {
   CashPaymentRequest,
   CashPaymentResponse,
@@ -55,6 +55,10 @@ export class PaymentApiService {
     return this.http
       .get<Payment[]>(`${this.baseUrl}/member/payments/history`)
       .pipe(
+        map((payments: any[]) => (payments || []).map(p => ({
+          ...p,
+          amount: Number(p.amount) || 0
+        }))),
         catchError((error) => {
           throw error;
           const fallback: Payment[] = [
@@ -83,6 +87,19 @@ export class PaymentApiService {
           return of(fallback);
         })
       );
+  }
+
+  /**
+   * Receptionist Pending Subscriptions (GET /api/receptionist/payments/pending)
+   */
+  getPendingSubscriptions(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/receptionist/payments/pending`).pipe(
+      map((list: any[]) => (list || []).map(item => ({
+        ...item,
+        plan: item.plan ? { ...item.plan, price: Number(item.plan.price) || 0 } : item.plan
+      }))),
+      catchError(() => of([]))
+    );
   }
 
   /**
@@ -150,6 +167,10 @@ export class PaymentApiService {
     return this.http
       .get<Payment[]>(`${this.baseUrl}/admin/revenue/payments`, { params })
       .pipe(
+        map((payments: any[]) => (payments || []).map(p => ({
+          ...p,
+          amount: Number(p.amount) || 0
+        }))),
         catchError((error) => {
           throw error;
           const fallback: Payment[] = [

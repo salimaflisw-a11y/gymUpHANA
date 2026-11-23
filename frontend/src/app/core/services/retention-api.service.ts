@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { AtRiskMember, NudgeResponse } from '../models/retention.model';
 
 @Injectable({
@@ -12,9 +12,15 @@ export class RetentionApiService {
   constructor(private http: HttpClient) {}
 
   getAtRiskMembers(): Observable<AtRiskMember[]> {
-    return this.http.get<AtRiskMember[]>(`${this.apiUrl}/at-risk`, {
+    return this.http.get<any>(`${this.apiUrl}/at-risk`, {
       withCredentials: true
-    });
+    }).pipe(
+      map((res: any) => {
+        if (Array.isArray(res)) return res;
+        if (res && Array.isArray(res.members)) return res.members;
+        return [];
+      })
+    );
   }
 
   sendNudge(memberId: number): Observable<NudgeResponse> {

@@ -46,6 +46,7 @@ class Subscription
     {
         $this->payments = new ArrayCollection();
         $this->startDate = new \DateTimeImmutable('today');
+        $this->endDate = new \DateTimeImmutable('today');
     }
 
     public function getId(): ?int

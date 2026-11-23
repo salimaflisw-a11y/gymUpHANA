@@ -151,12 +151,20 @@ class FacilityService
         $token = sprintf('%d.%d.%s', $member->getId(), $timeWindow, substr($signature, 0, 16));
 
         return [
+            'passId' => 'PASS-' . substr($signature, 0, 8),
             'memberId' => $member->getId(),
             'memberName' => $member->getFullName() ?? $member->getEmail(),
+            'planName' => $subscription->getPlan()?->getName() ?? 'Open Gym Access',
+            'planStatus' => $subscription->getStatus()->value,
+            'validUntil' => $subscription->getEndDate()->format('Y-m-d'),
             'passToken' => $token,
+            'tokenSeed' => substr($signature, 0, 12),
+            'securityHash' => $signature,
             'expiresInSeconds' => $secondsRemaining,
             'windowSeconds' => $windowSeconds,
             'qrRawPayload' => sprintf('GYMUP://PASS/%s', $token),
+            'qrData' => sprintf('GYMUP://PASS/%s', $token),
+            'refreshedAt' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
         ];
     }
 

@@ -77,7 +77,7 @@
 
   .subtitle {
     font-size: 0.95rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin: 0;
   }
 
@@ -102,7 +102,7 @@
 
       .counter-label {
         font-size: 0.7rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 700;
         text-transform: uppercase;
       }
@@ -137,7 +137,7 @@
   align-items: center;
   justify-content: center;
   padding: 5rem 2rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 
   .loader-spinner {
     width: 40px;
@@ -190,7 +190,7 @@
 
     .section-tag {
       font-size: 0.8rem;
-      color: #64748b;
+      color: var(--text-muted);
     }
   }
 }
@@ -227,7 +227,7 @@
 
       .pr-count {
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--text-muted);
       }
     }
 
@@ -271,7 +271,7 @@
             }
 
             .seat-pill {
-              color: #64748b;
+              color: var(--text-muted);
             }
           }
         }
@@ -282,7 +282,7 @@
           .rm-label {
             display: block;
             font-size: 0.65rem;
-            color: #64748b;
+            color: var(--text-muted);
             font-weight: 700;
           }
 
@@ -304,7 +304,7 @@
 
   .empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
   h3 { font-size: 1.25rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; }
-  p { font-size: 0.9rem; color: #94a3b8; max-width: 480px; margin: 0 auto 1.25rem auto; }
+  p { font-size: 0.9rem; color: var(--text-muted); max-width: 480px; margin: 0 auto 1.25rem auto; }
 
   .btn-start-log {
     padding: 0.7rem 1.5rem;
@@ -353,7 +353,7 @@
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 8px;
-      color: #94a3b8;
+      color: var(--text-muted);
       font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
@@ -406,7 +406,7 @@
 
       .qr-code-tag {
         font-size: 0.75rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-family: monospace;
       }
     }
@@ -422,7 +422,7 @@
       font-size: 0.85rem;
       margin: 0 0 1.25rem 0;
 
-      .target-label { color: #64748b; margin-right: 0.35rem; }
+      .target-label { color: var(--text-muted); margin-right: 0.35rem; }
       .target-val { color: #cbd5e1; font-weight: 500; }
     }
 
@@ -435,7 +435,7 @@
 
       .model-num {
         font-size: 0.75rem;
-        color: #64748b;
+        color: var(--text-muted);
       }
 
       .btn-quick-log {
@@ -498,7 +498,7 @@
       .btn-close {
         background: transparent;
         border: none;
-        color: #64748b;
+        color: var(--text-muted);
         font-size: 1.2rem;
         cursor: pointer;
 
@@ -536,7 +536,7 @@
           display: block;
           font-size: 0.8rem;
           font-weight: 600;
-          color: #94a3b8;
+          color: var(--text-muted);
           margin-bottom: 0.45rem;
         }
 
@@ -577,11 +577,11 @@
           align-items: center;
           margin-bottom: 0.35rem;
 
-          .preview-label { font-size: 0.85rem; color: #94a3b8; font-weight: 600; }
+          .preview-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
           .preview-val { font-size: 1.35rem; font-weight: 800; color: #00f5ff; }
         }
 
-        .preview-hint { font-size: 0.75rem; color: #64748b; }
+        .preview-hint { font-size: 0.75rem; color: var(--text-muted); }
       }
 
       .modal-footer {
@@ -596,7 +596,7 @@
           padding: 0.65rem 1.25rem;
           background: transparent;
           border: 1px solid rgba(255, 255, 255, 0.15);
-          color: #94a3b8;
+          color: var(--text-muted);
           border-radius: 10px;
           font-weight: 600;
           cursor: pointer;

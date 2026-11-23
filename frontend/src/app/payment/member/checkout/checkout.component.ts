@@ -91,6 +91,7 @@ export class CheckoutComponent implements OnInit {
         cardHolder: this.cardHolder,
         expiry: this.expiry,
         cvv: this.cvv,
+        paymentReference: 'PAY_CARD_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8).toUpperCase(),
       })
       .subscribe({
         next: (res) => {

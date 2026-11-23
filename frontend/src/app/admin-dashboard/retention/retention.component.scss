@@ -78,7 +78,7 @@
 
   .subtitle {
     font-size: 0.95rem;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin: 0;
   }
 
@@ -117,7 +117,7 @@
 
       .stat-label {
         font-size: 0.725rem;
-        color: #64748b;
+        color: var(--text-muted);
         font-weight: 700;
         text-transform: uppercase;
       }
@@ -138,7 +138,7 @@
   align-items: center;
   justify-content: center;
   padding: 5rem 2rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 
   .loader-spinner {
     width: 40px;
@@ -176,7 +176,7 @@
 
       .filter-count {
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--text-muted);
       }
     }
 
@@ -188,7 +188,7 @@
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
-      color: #94a3b8;
+      color: var(--text-muted);
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
@@ -212,7 +212,7 @@
       th {
         font-size: 0.75rem;
         font-weight: 700;
-        color: #64748b;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.08em;
         padding: 0.75rem 1.25rem;
@@ -277,7 +277,7 @@
 
             .member-email {
               font-size: 0.775rem;
-              color: #64748b;
+              color: var(--text-muted);
             }
           }
         }
@@ -303,7 +303,7 @@
 
           .days-sub {
             font-size: 0.75rem;
-            color: #64748b;
+            color: var(--text-muted);
           }
         }
 
@@ -349,7 +349,7 @@
 
           .strategy-text {
             font-size: 0.85rem;
-            color: #94a3b8;
+            color: var(--text-muted);
             line-height: 1.4;
             margin: 0;
           }
@@ -389,7 +389,7 @@
 
     .empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
     h3 { font-size: 1.3rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; }
-    p { font-size: 0.9rem; color: #94a3b8; max-width: 480px; margin: 0 auto; }
+    p { font-size: 0.9rem; color: var(--text-muted); max-width: 480px; margin: 0 auto; }
   }
 }
 

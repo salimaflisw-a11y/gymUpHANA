@@ -32,6 +32,7 @@ export interface CheckoutRequest {
   cardHolder?: string;
   expiry?: string;
   cvv?: string;
+  paymentReference?: string;
 }
 
 export interface CheckoutResponse {

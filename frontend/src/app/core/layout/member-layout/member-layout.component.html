@@ -82,6 +82,12 @@
         </svg>
         <span>PR Vault</span>
       </a>
+      <a routerLink="/member/workout-planner" routerLinkActive="active" class="nav-link">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+        <span>AI Workout Lab</span>
+      </a>
     </nav>
 
     <!-- Bottom Actions -->
@@ -188,7 +194,8 @@
 
           <div class="qr-canvas">
             <div class="qr-matrix-box">
-              <div class="qr-mock">
+              <img *ngIf="qrCodeDataUrl" [src]="qrCodeDataUrl" alt="GymUp Turnstile QR Code" class="real-qr-code-img" />
+              <div *ngIf="!qrCodeDataUrl" class="qr-mock">
                 <div class="qr-corner tl"></div>
                 <div class="qr-corner tr"></div>
                 <div class="qr-corner bl"></div>
@@ -219,7 +226,7 @@
           </div>
 
           <div class="card-security-footer">
-            <span class="sec-hash">SHA256: {{ accessPass.securityHash.substring(0, 24) }}...</span>
+            <span class="sec-hash">SHA256: {{ passSecurityHashSnippet }}...</span>
             <span class="sec-live">● Dynamic Token Active</span>
           </div>
         </div>

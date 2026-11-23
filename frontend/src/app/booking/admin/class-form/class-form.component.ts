@@ -18,6 +18,7 @@ export class ClassFormComponent implements OnInit {
   loading = false;
   submitting = false;
   error: string | null = null;
+  coaches: { id: number; fullName: string; email: string }[] = [];
 
   daysOfWeek: DayOfWeek[] = [
     'MONDAY',
@@ -31,7 +32,7 @@ export class ClassFormComponent implements OnInit {
 
   formData = {
     name: '',
-    coachId: 6, // default coach user ID
+    coachId: 6,
     room: 'Studio A (Main)',
     dayOfWeek: 'MONDAY' as DayOfWeek,
     startTime: '09:00',
@@ -46,13 +47,36 @@ export class ClassFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.bookingApi.getCoaches().subscribe({
+      next: (coaches) => {
+        this.coaches = coaches;
+        if (!this.isEditMode && coaches.length > 0) {
+          this.formData.coachId = coaches[0].id;
+        }
+      }
+    });
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEditMode = true;
       this.classId = Number(idParam);
-      // Populate defaults for editing
-      this.formData.name = 'Yoga Flow Advanced';
-      this.formData.capacity = 25;
+      this.loading = true;
+      this.bookingApi.getClass(this.classId).subscribe({
+        next: (cls) => {
+          this.formData.name = cls.name;
+          this.formData.coachId = cls.coachId || 6;
+          this.formData.room = cls.room;
+          this.formData.dayOfWeek = cls.dayOfWeek as DayOfWeek;
+          this.formData.startTime = cls.startTime;
+          this.formData.endTime = cls.endTime;
+          this.formData.capacity = cls.capacity;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.error = 'Failed to load class session details.';
+        }
+      });
     }
   }
 

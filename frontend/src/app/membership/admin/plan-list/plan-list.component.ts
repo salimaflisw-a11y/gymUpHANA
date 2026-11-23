@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MembershipApiService } from '../../membership-api.service';
@@ -29,7 +29,10 @@ export class PlanListComponent implements OnInit {
     this.loading = true;
     this.membershipApi.getPlans().subscribe({
       next: (data) => {
-        this.plans = data;
+        this.plans = (data || []).map(p => ({
+          ...p,
+          price: Number(p.price) || 0
+        }));
         this.loading = false;
       },
       error: (err) => {
