@@ -55,4 +55,38 @@ class SubscriptionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Number of distinct members holding a currently valid active subscription.
+     */
+    public function countActiveMembers(): int
+    {
+        $today = new \DateTimeImmutable('today');
+
+        return (int) $this->createQueryBuilder('s')
+            ->select('COUNT(DISTINCT s.member)')
+            ->andWhere('s.status = :status')
+            ->andWhere('s.startDate <= :today')
+            ->andWhere('s.endDate >= :today')
+            ->setParameter('status', SubscriptionStatus::ACTIVE)
+            ->setParameter('today', $today)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * Number of distinct members whose subscription covered a given date.
+     */
+    public function countMembersActiveOn(\DateTimeInterface $date): int
+    {
+        return (int) $this->createQueryBuilder('s')
+            ->select('COUNT(DISTINCT s.member)')
+            ->andWhere('s.status != :cancelled')
+            ->andWhere('s.startDate <= :date')
+            ->andWhere('s.endDate >= :date')
+            ->setParameter('cancelled', SubscriptionStatus::CANCELLED)
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

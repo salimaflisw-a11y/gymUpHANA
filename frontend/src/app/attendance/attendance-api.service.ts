@@ -19,28 +19,15 @@ export class AttendanceApiService {
   /**
    * Member QR Check-in (POST /api/attendance/check-in)
    */
-  processCheckIn(): Observable<CheckInResult> {
-    return this.http
-      .post<CheckInResult>(`${this.baseUrl}/attendance/check-in`, {})
-      .pipe(
-        catchError((error) => {
-          throw error;
-          const fallback: CheckInResult = {
-            success: true,
-            message:
-              'Great work! You checked in on your scheduled workout day! Your streak is now 8 days in a row! 🔥',
-            data: {
-              checkInId: Math.floor(Math.random() * 500) + 1,
-              scannedAt: new Date().toISOString(),
-              currentStreak: 8,
-              streakIncremented: true,
-              streakBroken: false,
-              scheduleDays: ['MONDAY', 'WEDNESDAY', 'FRIDAY', 'SATURDAY'],
-            },
-          };
-          return of(fallback);
-        })
-      );
+  processCheckIn(qrCode: string): Observable<CheckInResult> {
+    return this.http.post<CheckInResult>(`${this.baseUrl}/attendance/check-in`, { qrCode });
+  }
+
+  /**
+   * Payload embedded in the GymUp entrance QR poster (GET /api/attendance/entry-qr)
+   */
+  getEntryQr(): Observable<{ payload: string; label: string }> {
+    return this.http.get<{ payload: string; label: string }>(`${this.baseUrl}/attendance/entry-qr`);
   }
 
   /**

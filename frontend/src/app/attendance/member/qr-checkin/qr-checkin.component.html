@@ -2,39 +2,55 @@
   <div class="checkin-header">
     <span class="badge">ATTENDANCE SCANNER</span>
     <h1>Gym Attendance Check-In</h1>
-    <p>Point your device camera at the QR code displayed at the entrance turnstile or front desk.</p>
+    <p>Open your camera and scan the GymUp QR code displayed at the entrance turnstile or front desk.</p>
   </div>
 
   <div class="scanner-card">
     <!-- Camera Scanner Viewport -->
-    <div class="scanner-viewport" [class.scanning]="isScanning">
+    <div class="scanner-viewport" [class.camera-active]="isCameraActive">
+      <video #videoElement class="camera-feed" autoplay playsinline muted></video>
+      <canvas #canvasElement class="scan-canvas"></canvas>
+
       <div class="corner top-left"></div>
       <div class="corner top-right"></div>
       <div class="corner bottom-left"></div>
       <div class="corner bottom-right"></div>
 
       <!-- Laser Scan Animation -->
-      <div class="laser-beam" *ngIf="isScanning"></div>
+      <div class="laser-beam" *ngIf="state === 'scanning'"></div>
 
-      <div class="qr-target">
+      <!-- Idle placeholder -->
+      <div class="qr-target" *ngIf="!isCameraActive && state !== 'starting'">
         <div class="qr-sample">
           <div class="qr-block top-left-box"></div>
           <div class="qr-block top-right-box"></div>
           <div class="qr-block bottom-left-box"></div>
           <span class="qr-center-icon">🏋️</span>
         </div>
-        <span class="scanner-hint" *ngIf="!isScanning">
-          Align QR Code within the frame
-        </span>
-        <span class="scanner-hint active" *ngIf="isScanning">
-          Verifying Member Pass & Streak...
-        </span>
+        <span class="scanner-hint">Tap the button below to activate the camera</span>
+      </div>
+
+      <div class="viewport-status" *ngIf="state === 'starting'">
+        <span class="spinner"></span>
+        <span class="scanner-hint active">Starting camera…</span>
+      </div>
+
+      <div class="viewport-status" *ngIf="state === 'scanning'">
+        <span class="scanner-hint active">Scanning — align the GymUp QR code inside the frame</span>
+      </div>
+
+      <div class="viewport-status verifying" *ngIf="state === 'verifying'">
+        <span class="spinner"></span>
+        <span class="scanner-hint active">QR detected — validating with gym server…</span>
       </div>
     </div>
 
     <!-- Error message if any -->
     <div class="error-banner" *ngIf="errorMessage">
       ⚠️ {{ errorMessage }}
+      <small class="scanned-code" *ngIf="scannedCode">
+        Scanned: {{ scannedCode.length > 48 ? (scannedCode | slice:0:48) + '…' : scannedCode }}
+      </small>
     </div>
 
     <!-- Scan Trigger Button -->
@@ -42,17 +58,28 @@
       <button
         type="button"
         class="btn-scan"
-        [disabled]="isScanning"
-        (click)="triggerScan()"
+        *ngIf="!isCameraActive"
+        [disabled]="isBusy"
+        (click)="startCamera()"
       >
-        <span *ngIf="!isScanning">📷 Tap to Scan Gym QR Code</span>
-        <span *ngIf="isScanning">Scanning...</span>
+        <span>📷 Open Camera &amp; Scan QR</span>
+      </button>
+      <button
+        type="button"
+        class="btn-scan btn-stop"
+        *ngIf="isCameraActive"
+        [disabled]="isBusy"
+        (click)="reset()"
+      >
+        <span>✕ Stop Camera</span>
       </button>
 
       <div class="quick-links">
         <a routerLink="/member/schedule">Edit Weekly Schedule</a>
         <span>•</span>
         <a routerLink="/member/streak">View My Streak Stats</a>
+        <span>•</span>
+        <a href="/gym-entry" target="_blank" rel="noopener">Gym Entrance QR Poster</a>
       </div>
     </div>
   </div>

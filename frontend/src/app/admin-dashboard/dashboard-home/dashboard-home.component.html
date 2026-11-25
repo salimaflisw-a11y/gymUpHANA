@@ -3,7 +3,7 @@
     <div class="header-titles">
       <div class="status-chip">
         <span class="pulse-beacon"></span>
-        <span>LIVE TELEMETRY • FACILITY REAL-TIME</span>
+        <span>LIVE TELEMETRY • {{ lastUpdatedLabel }}</span>
       </div>
       <h1>Command Center Overview</h1>
       <p class="subtitle">Real-time occupancy, revenue streams, and athletic engagement metrics.</p>
@@ -47,7 +47,7 @@
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
           </div>
-          <span class="metric-badge positive">+12.4%</span>
+          <span class="metric-badge" [ngClass]="growthClass">{{ growthLabel }}</span>
         </div>
         <div class="metric-body">
           <span class="metric-label">ACTIVE ATHLETES</span>
@@ -55,7 +55,7 @@
           <div class="progress-bar-container">
             <div class="progress-bar-fill" [style.width.%]="(metrics.activeMembers / (metrics.totalMembers || 1)) * 100"></div>
           </div>
-          <span class="metric-sub">{{ metrics.totalMembers }} total registered in database</span>
+          <span class="metric-sub">{{ metrics.totalMembers }} registered • {{ metrics.newMembersThisMonth }} joined this month</span>
         </div>
       </div>
 
@@ -67,7 +67,7 @@
               <path d="M18 20V10M12 20V4M6 20v-6"/>
             </svg>
           </div>
-          <span class="metric-badge status-good">OPTIMAL</span>
+          <span class="metric-badge" [ngClass]="occupancyStatus.cssClass">{{ occupancyStatus.label }}</span>
         </div>
         <div class="metric-body">
           <span class="metric-label">STUDIO OCCUPANCY</span>
@@ -75,7 +75,7 @@
           <div class="progress-bar-container">
             <div class="progress-bar-fill emerald" [style.width.%]="metrics.classOccupancyRate"></div>
           </div>
-          <span class="metric-sub">Across all scheduled daily class sessions</span>
+          <span class="metric-sub">{{ metrics.confirmedBookings }} / {{ metrics.classCapacity }} spots filled across {{ metrics.classSessionCount }} sessions</span>
         </div>
       </div>
 
@@ -87,7 +87,7 @@
               <line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
           </div>
-          <span class="metric-badge revenue-badge">THIS MONTH</span>
+          <span class="metric-badge" [ngClass]="revenueChangeClass">{{ revenueChangeLabel }}</span>
         </div>
         <div class="metric-body">
           <span class="metric-label">TOTAL REVENUE</span>
@@ -96,6 +96,7 @@
             <span class="pill-online">Online: ${{ metrics.monthlyRevenue.online.toFixed(2) }}</span>
             <span class="pill-cash">Cash: ${{ metrics.monthlyRevenue.cash.toFixed(2) }}</span>
           </div>
+          <span class="metric-sub">{{ metrics.monthlyRevenue.paymentCount }} payments processed this month</span>
         </div>
       </div>
 
@@ -107,15 +108,15 @@
               <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
             </svg>
           </div>
-          <span class="metric-badge warning">ATTENTION</span>
+          <span class="metric-badge" [ngClass]="expiringStatus.cssClass">{{ expiringStatus.label }}</span>
         </div>
         <div class="metric-body">
           <span class="metric-label">EXPIRING PASSES</span>
           <h2 class="metric-value">{{ metrics.expiringMemberships }}</h2>
           <div class="progress-bar-container">
-            <div class="progress-bar-fill amber" style="width: 45%;"></div>
+            <div class="progress-bar-fill amber" [style.width.%]="metrics.expiringSharePercent"></div>
           </div>
-          <span class="metric-sub">Subscriptions expiring within 7 days</span>
+          <span class="metric-sub">{{ metrics.expiringMemberships }} of {{ metrics.activeMembers }} active passes expire within 7 days</span>
         </div>
       </div>
     </div>
@@ -175,6 +176,9 @@
             </tr>
           </thead>
           <tbody>
+            <tr *ngIf="metrics.topStreaks.length === 0">
+              <td colspan="5" class="empty-row">No attendance streaks recorded yet.</td>
+            </tr>
             <tr *ngFor="let item of metrics.topStreaks; let i = index">
               <td>
                 <span class="rank-tag" [class.rank-gold]="i === 0" [class.rank-silver]="i === 1" [class.rank-bronze]="i === 2">

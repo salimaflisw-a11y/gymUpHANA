@@ -1,0 +1,28 @@
+<div class="entry-page">
+  <div class="entry-card">
+    <span class="badge">GYMUP MAIN ENTRANCE</span>
+    <h1>Scan to Check In</h1>
+    <p class="subtitle">
+      Members: open <strong>Attendance Check-In</strong> in the GymUp app and scan this code to record your visit and grow your streak.
+    </p>
+
+    <div class="qr-frame" *ngIf="qrDataUrl; else loadingOrError">
+      <img [src]="qrDataUrl" alt="GymUp entrance QR code" />
+    </div>
+
+    <ng-template #loadingOrError>
+      <div class="qr-frame placeholder">
+        <div class="error-message" *ngIf="errorMessage">⚠️ {{ errorMessage }}</div>
+        <div class="loading-message" *ngIf="!errorMessage">
+          <span class="spinner"></span>
+          Loading entrance code…
+        </div>
+      </div>
+    </ng-template>
+
+    <div class="entry-footer">
+      <span class="clock">{{ now | date:'fullDate' }} · {{ now | date:'mediumTime' }}</span>
+      <span class="hint">Keep this page open on the entrance display or print it as a poster.</span>
+    </div>
+  </div>
+</div>

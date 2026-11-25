@@ -1,23 +1,38 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Observable, map } from 'rxjs';
+
+export interface RevenueSummary {
+  online: number;
+  cash: number;
+  total: number;
+  paymentCount: number;
+  previousMonth: number;
+  changePercent: number | null;
+}
+
+export interface StreakLeaderboardEntry {
+  memberId: number;
+  memberName: string;
+  streak: number;
+  lastSuccessDate: string;
+}
 
 export interface DashboardMetrics {
   activeMembers: number;
+  activeMembersThirtyDaysAgo: number;
+  activeMembersChangePercent: number | null;
   totalMembers: number;
+  newMembersThisMonth: number;
   classOccupancyRate: number;
-  monthlyRevenue: {
-    online: number;
-    cash: number;
-    total: number;
-  };
+  confirmedBookings: number;
+  classCapacity: number;
+  classSessionCount: number;
+  monthlyRevenue: RevenueSummary;
   expiringMemberships: number;
-  topStreaks: Array<{
-    memberId: number;
-    memberName: string;
-    streak: number;
-    lastSuccessDate: string;
-  }>;
+  expiringSharePercent: number;
+  topStreaks: StreakLeaderboardEntry[];
+  generatedAt: string;
 }
 
 @Injectable({
@@ -30,45 +45,42 @@ export class DashboardApiService {
   getDashboardMetrics(): Observable<DashboardMetrics> {
     return this.http.get<any>(`${this.baseUrl}/admin/dashboard`).pipe(
       map((res: any) => {
+        const revenue = res.revenueThisMonth ?? {};
+
         return {
-          activeMembers: res.activeMembersCount ?? res.activeMembers ?? 0,
-          totalMembers: res.totalRegisteredMembers ?? res.totalMembers ?? 0,
-          classOccupancyRate: res.overallOccupancyRatePercent ?? res.classOccupancyRate ?? 0,
+          activeMembers: Number(res.activeMembersCount ?? 0),
+          activeMembersThirtyDaysAgo: Number(res.activeMembersThirtyDaysAgo ?? 0),
+          activeMembersChangePercent:
+            res.activeMembersChangePercent === null || res.activeMembersChangePercent === undefined
+              ? null
+              : Number(res.activeMembersChangePercent),
+          totalMembers: Number(res.totalRegisteredMembers ?? 0),
+          newMembersThisMonth: Number(res.newMembersThisMonth ?? 0),
+          classOccupancyRate: Number(res.overallOccupancyRatePercent ?? 0),
+          confirmedBookings: Number(res.totalConfirmedBookings ?? 0),
+          classCapacity: Number(res.totalCapacity ?? 0),
+          classSessionCount: Number(res.classSessionCount ?? 0),
           monthlyRevenue: {
-            online: res.revenueThisMonth?.onlineRevenue ?? res.monthlyRevenue?.online ?? 0,
-            cash: res.revenueThisMonth?.cashRevenue ?? res.monthlyRevenue?.cash ?? 0,
-            total: res.revenueThisMonth?.totalRevenue ?? res.monthlyRevenue?.total ?? 0,
+            online: Number(revenue.onlineRevenue ?? 0),
+            cash: Number(revenue.cashRevenue ?? 0),
+            total: Number(revenue.totalRevenue ?? 0),
+            paymentCount: Number(revenue.totalCount ?? 0),
+            previousMonth: Number(revenue.previousMonthRevenue ?? 0),
+            changePercent:
+              revenue.changePercent === null || revenue.changePercent === undefined
+                ? null
+                : Number(revenue.changePercent),
           },
-          expiringMemberships: res.expiringMembershipsCount ?? res.expiringMemberships ?? 0,
-          topStreaks: (res.topStreaks || []).map((s: any) => ({
+          expiringMemberships: Number(res.expiringMembershipsCount ?? 0),
+          expiringSharePercent: Number(res.expiringMembershipsSharePercent ?? 0),
+          topStreaks: (res.topStreaks ?? []).map((s: any) => ({
             memberId: s.memberId,
-            memberName: s.memberName,
-            streak: s.streak,
-            lastSuccessDate: s.lastSuccessDate || '',
+            memberName: s.memberName ?? 'Unknown member',
+            streak: Number(s.streak ?? 0),
+            lastSuccessDate: s.lastSuccessDate ?? '',
           })),
+          generatedAt: res.generatedAt ?? new Date().toISOString(),
         };
-      }),
-      catchError((error) => {
-        throw error;
-        const fallback: DashboardMetrics = {
-          activeMembers: 156,
-          totalMembers: 203,
-          classOccupancyRate: 78.5,
-          monthlyRevenue: {
-            online: 8420.0,
-            cash: 3150.0,
-            total: 11570.0
-          },
-          expiringMemberships: 12,
-          topStreaks: [
-            { memberId: 101, memberName: 'Alexander Volkov', streak: 34, lastSuccessDate: '2026-10-21' },
-            { memberId: 102, memberName: 'Jessica Chen', streak: 28, lastSuccessDate: '2026-10-21' },
-            { memberId: 103, memberName: 'Marcus Aurelius', streak: 21, lastSuccessDate: '2026-10-20' },
-            { memberId: 104, memberName: 'Sophia Taylor', streak: 16, lastSuccessDate: '2026-10-21' },
-            { memberId: 105, memberName: 'David Beckham', streak: 12, lastSuccessDate: '2026-10-20' }
-          ]
-        };
-        return of(fallback);
       })
     );
   }

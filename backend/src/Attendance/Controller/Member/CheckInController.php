@@ -4,6 +4,7 @@ namespace App\Attendance\Controller\Member;
 
 use App\Attendance\Repository\CheckInRepository;
 use App\Attendance\Repository\StreakRepository;
+use App\Attendance\Service\EntryQrService;
 use App\Attendance\Service\StreakService;
 use App\Auth\Entity\User;
 use LogicException;
@@ -20,8 +21,22 @@ class CheckInController extends AbstractController
     public function __construct(
         private readonly StreakService $streakService,
         private readonly CheckInRepository $checkInRepository,
-        private readonly StreakRepository $streakRepository
+        private readonly StreakRepository $streakRepository,
+        private readonly EntryQrService $entryQrService
     ) {
+    }
+
+    /**
+     * Payload rendered into the QR poster at the gym entrance. The poster
+     * itself is public, so this needs no authentication.
+     */
+    #[Route('/entry-qr', name: 'entry_qr', methods: ['GET'])]
+    public function entryQr(): JsonResponse
+    {
+        return $this->json([
+            'payload' => $this->entryQrService->getPayload(),
+            'label' => 'GymUp Main Entrance',
+        ]);
     }
 
     #[Route('/check-in', name: 'check_in', methods: ['POST'])]
@@ -33,6 +48,23 @@ class CheckInController extends AbstractController
 
         if (!$user->isActive()) {
             return $this->json(['error' => 'Account is inactive. Please contact gym staff.'], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $qrCode = is_array($data) ? trim((string) ($data['qrCode'] ?? '')) : '';
+
+        if ($qrCode === '') {
+            return $this->json(
+                ['error' => 'No QR code detected. Scan the GymUp QR code displayed at the gym entrance.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        if (!$this->entryQrService->isValid($qrCode)) {
+            return $this->json(
+                ['error' => 'Check-in rejected: this QR code is not the GymUp entrance code.'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         try {

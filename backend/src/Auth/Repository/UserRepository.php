@@ -3,6 +3,7 @@
 namespace App\Auth\Repository;
 
 use App\Auth\Entity\User;
+use App\Shared\Enum\UserRole;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -25,6 +26,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * Number of members registered within the given window.
+     */
+    public function countMembersRegisteredBetween(\DateTimeInterface $from, \DateTimeInterface $to): int
+    {
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.role = :role')
+            ->andWhere('u.createdAt >= :from')
+            ->andWhere('u.createdAt < :to')
+            ->setParameter('role', UserRole::MEMBER)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**

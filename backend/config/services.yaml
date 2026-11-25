@@ -9,6 +9,7 @@
 parameters:
     env(GEMINI_API_KEY): ''
     env(GEMINI_MODEL): 'gemini-3.5-flash-lite'
+    env(GYM_ENTRY_QR_TOKEN): 'GYMUP-ENTRANCE-7F3K9Q'
 
 services:
     # default configuration for services in *this* file

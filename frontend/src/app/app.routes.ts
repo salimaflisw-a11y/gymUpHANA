@@ -79,6 +79,10 @@ export const routes: Routes = [
     loadComponent: () => import('./hiring/public/job-listings/job-listings.component').then(m => m.JobListingsComponent)
   },
   {
+    path: 'gym-entry',
+    loadComponent: () => import('./attendance/public/gym-entry/gym-entry-qr.component').then(m => m.GymEntryQrComponent)
+  },
+  {
     path: 'jobs/:id/apply',
     loadComponent: () => import('./hiring/public/application-form/application-form.component').then(m => m.ApplicationFormComponent)
   }
